@@ -18,10 +18,10 @@ return new class extends Migration
             $table->text("deskripsi_d");
             $table->timestamps();
 
-            $table->foreign("guru_id")
-                ->references("id")
-                ->on("gurus")
-                ->onDelete("cascade");
+            // $table->foreign("guru_id")
+            //     ->references("id")
+            //     ->on("gurus")
+            //     ->onDelete("cascade");
         });
     }
     
