@@ -49,7 +49,7 @@
             $(document).ready(function () {
                 function loadGuru() {
                     $.ajax({
-                        url: "/api/guru",
+                        url: "/api/guru-list",
                         type: "GET",
                         success: function (response) {
                             let options = `<option value="">--Pilih Guru--</option>`;
