@@ -5,28 +5,27 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class SiswaController extends Controller
 {
     public function index()
     {
-        $siswa = Siswa::latest()->get();
+        $siswas = Siswa::latest()->get();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data siswa berhasil diambil',
-            'data' => $siswa
+            'message' => 'Data siswa berhasil diambil.',
+            'data' => $siswas,
         ], 200);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nis' => 'required|string|max:30|unique:siswas,nis',
-            'nama' => 'required|string|max:100',
-            'email' => 'required|email|max:100|unique:siswas,email',
-            'kelas' => 'required|string|max:50',
+        $request->validate([
+            'nis' => 'required|string|max:50|unique:siswas,nis',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:siswas,email',
+            'kelas' => 'required|string|max:100',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tanggal_lahir' => 'nullable|date',
             'no_hp' => 'nullable|string|max:20',
@@ -34,12 +33,22 @@ class SiswaController extends Controller
             'status' => 'required|in:Aktif,Tidak Aktif',
         ]);
 
-        $siswa = Siswa::create($validated);
+        $siswa = Siswa::create([
+            'nis' => $request->nis,
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'kelas' => $request->kelas,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+            'status' => $request->status,
+        ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data siswa berhasil ditambahkan',
-            'data' => $siswa
+            'message' => 'Data siswa berhasil ditambahkan.',
+            'data' => $siswa,
         ], 201);
     }
 
@@ -50,14 +59,14 @@ class SiswaController extends Controller
         if (!$siswa) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data siswa tidak ditemukan'
+                'message' => 'Data siswa tidak ditemukan.',
             ], 404);
         }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Detail siswa berhasil diambil',
-            'data' => $siswa
+            'message' => 'Detail siswa berhasil diambil.',
+            'data' => $siswa,
         ], 200);
     }
 
@@ -68,25 +77,15 @@ class SiswaController extends Controller
         if (!$siswa) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data siswa tidak ditemukan'
+                'message' => 'Data siswa tidak ditemukan.',
             ], 404);
         }
 
-        $validated = $request->validate([
-            'nis' => [
-                'required',
-                'string',
-                'max:30',
-                Rule::unique('siswas', 'nis')->ignore($siswa->id),
-            ],
-            'nama' => 'required|string|max:100',
-            'email' => [
-                'required',
-                'email',
-                'max:100',
-                Rule::unique('siswas', 'email')->ignore($siswa->id),
-            ],
-            'kelas' => 'required|string|max:50',
+        $request->validate([
+            'nis' => 'required|string|max:50|unique:siswas,nis,' . $siswa->id,
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:siswas,email,' . $siswa->id,
+            'kelas' => 'required|string|max:100',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tanggal_lahir' => 'nullable|date',
             'no_hp' => 'nullable|string|max:20',
@@ -94,12 +93,22 @@ class SiswaController extends Controller
             'status' => 'required|in:Aktif,Tidak Aktif',
         ]);
 
-        $siswa->update($validated);
+        $siswa->update([
+            'nis' => $request->nis,
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'kelas' => $request->kelas,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+            'status' => $request->status,
+        ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data siswa berhasil diperbarui',
-            'data' => $siswa
+            'message' => 'Data siswa berhasil diperbarui.',
+            'data' => $siswa,
         ], 200);
     }
 
@@ -110,7 +119,7 @@ class SiswaController extends Controller
         if (!$siswa) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data siswa tidak ditemukan'
+                'message' => 'Data siswa tidak ditemukan.',
             ], 404);
         }
 
@@ -118,7 +127,7 @@ class SiswaController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data siswa berhasil dihapus'
+            'message' => 'Data siswa berhasil dihapus.',
         ], 200);
     }
 }
