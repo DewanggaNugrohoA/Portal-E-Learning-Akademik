@@ -9,10 +9,13 @@ class MataPelajaranController extends Controller
 {
     public function index()
     {
-        return response()->json([
-            'message' => 'Data mata pelajaran berhasil diambil',
-            'data' => MataPelajaran::latest()->get()
-        ], 200);
+        $data = MataPelajaran::latest()->get();
+        return view('mata-pelajaran.index', compact('data'));
+    }
+
+    public function create()
+    {
+        return view('mata-pelajaran.create');
     }
 
     public function store(Request $request)
@@ -24,39 +27,27 @@ class MataPelajaranController extends Controller
             'jumlah_jam' => 'required|integer|min:1',
         ]);
 
-        $data = MataPelajaran::create($validated);
+        MataPelajaran::create($validated);
 
-        return response()->json([
-            'message' => 'Mata pelajaran berhasil ditambahkan',
-            'data' => $data
-        ], 201);
+        return redirect()->route('mata-pelajaran.index')
+            ->with('success', 'Mata pelajaran berhasil ditambahkan.');
     }
 
     public function show($id)
     {
-        $data = MataPelajaran::find($id);
+        $data = MataPelajaran::findOrFail($id);
+        return view('mata-pelajaran.show', compact('data'));
+    }
 
-        if (!$data) {
-            return response()->json([
-                'message' => 'Data mata pelajaran tidak ditemukan'
-            ], 404);
-        }
-
-        return response()->json([
-            'message' => 'Detail mata pelajaran berhasil diambil',
-            'data' => $data
-        ], 200);
+    public function edit($id)
+    {
+        $data = MataPelajaran::findOrFail($id);
+        return view('mata-pelajaran.edit', compact('data'));
     }
 
     public function update(Request $request, $id)
     {
-        $data = MataPelajaran::find($id);
-
-        if (!$data) {
-            return response()->json([
-                'message' => 'Data mata pelajaran tidak ditemukan'
-            ], 404);
-        }
+        $data = MataPelajaran::findOrFail($id);
 
         $validated = $request->validate([
             'kode_mapel' => 'required|string|max:20|unique:mata_pelajarans,kode_mapel,' . $id,
@@ -67,26 +58,16 @@ class MataPelajaranController extends Controller
 
         $data->update($validated);
 
-        return response()->json([
-            'message' => 'Mata pelajaran berhasil diperbarui',
-            'data' => $data
-        ], 200);
+        return redirect()->route('mata-pelajaran.index')
+            ->with('success', 'Mata pelajaran berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $data = MataPelajaran::find($id);
-
-        if (!$data) {
-            return response()->json([
-                'message' => 'Data mata pelajaran tidak ditemukan'
-            ], 404);
-        }
-
+        $data = MataPelajaran::findOrFail($id);
         $data->delete();
 
-        return response()->json([
-            'message' => 'Mata pelajaran berhasil dihapus'
-        ], 200);
+        return redirect()->route('mata-pelajaran.index')
+            ->with('success', 'Mata pelajaran berhasil dihapus.');
     }
 }

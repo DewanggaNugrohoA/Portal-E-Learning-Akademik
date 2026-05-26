@@ -626,6 +626,7 @@
             <a href="{{ url('/') }}">Beranda</a>
             <a href="{{ route('materi.index') }}">Materi</a>
             <a href="{{ route('siswa.index') }}">Siswa</a>
+            <a href="{{ route('mata-pelajaran.index') }}">Mata Pelajaran</a>
         </div>
     </div>
 

@@ -1,11 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GuruController;
+use App\Http\Controllers\MataPelajaranController;
+use App\Http\Controllers\MateriController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\SiswaController;
-use App\Http\Controllers\MateriController;
-use App\Http\Controllers\GuruController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get("/user", function (Request $request) {
     return $request->user();
@@ -14,6 +15,7 @@ Route::get("/user", function (Request $request) {
 Route::apiResource("siswa", SiswaController::class);
 Route::apiResource("materi", MateriController::class);
 Route::apiResource("guru", GuruController::class);
+Route::apiResource('mata-pelajaran', MataPelajaranController::class);
 
 Route::get("/nilai", [NilaiController::class, "index"]);
 Route::post("/nilai", [NilaiController::class, "store"]);
