@@ -21,5 +21,5 @@ class Siswa extends Model
         'no_hp',
         'alamat',
         'status',
-   ];
+    ];
 }
