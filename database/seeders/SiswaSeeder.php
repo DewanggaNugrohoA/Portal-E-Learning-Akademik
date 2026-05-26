@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Siswa;
 use Illuminate\Database\Seeder;
+use App\Models\Siswa;
 
 class SiswaSeeder extends Seeder
 {
@@ -11,48 +11,37 @@ class SiswaSeeder extends Seeder
     {
         $dataSiswa = [
             [
-                'nis' => '240101',
-                'nama' => 'Nabila Putri Azzahra',
-                'email' => 'nabila.putri@gmail.com',
-                'kelas' => 'X RPL 1',
+                'nis' => '230001',
+                'nama' => 'Sevi Rina Pertiwi',
+                'email' => 'sevi@gmail.com',
+                'kelas' => 'X IPA 1',
                 'jenis_kelamin' => 'Perempuan',
-                'tanggal_lahir' => '2008-02-14',
-                'no_hp' => '081245671001',
-                'alamat' => 'Bandung',
+                'tanggal_lahir' => '2007-05-12',
+                'no_hp' => '081234567890',
+                'alamat' => 'Bengkulu',
                 'status' => 'Aktif',
             ],
             [
-                'nis' => '240102',
-                'nama' => 'Fajar Maulana',
-                'email' => 'fajar.maulana@gmail.com',
-                'kelas' => 'X RPL 2',
-                'jenis_kelamin' => 'Laki-laki',
-                'tanggal_lahir' => '2008-06-22',
-                'no_hp' => '081245671002',
-                'alamat' => 'Jakarta',
-                'status' => 'Aktif',
-            ],
-            [
-                'nis' => '240103',
-                'nama' => 'Salsa Amalia',
-                'email' => 'salsa.amalia@gmail.com',
-                'kelas' => 'XI TKJ 1',
+                'nis' => '230002',
+                'nama' => 'Aulia Rahma',
+                'email' => 'aulia@gmail.com',
+                'kelas' => 'X IPA 2',
                 'jenis_kelamin' => 'Perempuan',
-                'tanggal_lahir' => '2007-09-10',
-                'no_hp' => '081245671003',
-                'alamat' => 'Surabaya',
+                'tanggal_lahir' => '2007-08-21',
+                'no_hp' => '082345678901',
+                'alamat' => 'Bengkulu',
                 'status' => 'Aktif',
             ],
             [
-                'nis' => '240104',
-                'nama' => 'Rangga Saputra',
-                'email' => 'rangga.saputra@gmail.com',
-                'kelas' => 'XI TKJ 2',
+                'nis' => '230003',
+                'nama' => 'Rizky Pratama',
+                'email' => 'rizky@gmail.com',
+                'kelas' => 'XI IPS 1',
                 'jenis_kelamin' => 'Laki-laki',
-                'tanggal_lahir' => '2007-12-05',
-                'no_hp' => '081245671004',
-                'alamat' => 'Yogyakarta',
-                'status' => 'Tidak Aktif',
+                'tanggal_lahir' => '2006-11-03',
+                'no_hp' => '083456789012',
+                'alamat' => 'Bengkulu',
+                'status' => 'Aktif',
             ],
         ];
 
