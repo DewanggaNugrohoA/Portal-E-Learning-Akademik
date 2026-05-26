@@ -1,23 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MateriController;
-use App\Http\Controllers\NilaiController;
 
 Route::get('/', function () {
-    return view('dashboard.index');
-})->name('dashboard');
+    return view('index');
+});
 
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
-})->name('dashboard.index');
-
-/*
-|--------------------------------------------------------------------------
-| Modul Materi - Dewangga Nugroho Anwar
-| Halaman Blade saja, proses CRUD tetap lewat API /api/materi
-|--------------------------------------------------------------------------
-*/
 Route::get('/materi', function () {
     return view('materi.index');
 })->name('materi.index');
@@ -33,5 +21,3 @@ Route::get('/materi/{id}', function ($id) {
 Route::get('/materi/{id}/edit', function ($id) {
     return view('materi.edit', compact('id'));
 })->name('materi.edit');
-
-Route::resource('/nilai', NilaiController::class);

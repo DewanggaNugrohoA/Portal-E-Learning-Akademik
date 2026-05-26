@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -15,7 +16,7 @@ class SiswaController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data siswa berhasil diambil',
-            'data' => $siswa
+            'data' => $siswa,
         ], 200);
     }
 
@@ -38,7 +39,7 @@ class SiswaController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data siswa berhasil ditambahkan',
-            'data' => $siswa
+            'data' => $siswa,
         ], 201);
     }
 
@@ -49,14 +50,14 @@ class SiswaController extends Controller
         if (!$siswa) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data siswa tidak ditemukan'
+                'message' => 'Data siswa tidak ditemukan',
             ], 404);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Detail siswa berhasil diambil',
-            'data' => $siswa
+            'data' => $siswa,
         ], 200);
     }
 
@@ -67,7 +68,7 @@ class SiswaController extends Controller
         if (!$siswa) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data siswa tidak ditemukan'
+                'message' => 'Data siswa tidak ditemukan',
             ], 404);
         }
 
@@ -98,7 +99,7 @@ class SiswaController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data siswa berhasil diperbarui',
-            'data' => $siswa
+            'data' => $siswa,
         ], 200);
     }
 
@@ -109,7 +110,7 @@ class SiswaController extends Controller
         if (!$siswa) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data siswa tidak ditemukan'
+                'message' => 'Data siswa tidak ditemukan',
             ], 404);
         }
 
@@ -117,7 +118,7 @@ class SiswaController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data siswa berhasil dihapus'
+            'message' => 'Data siswa berhasil dihapus',
         ], 200);
     }
 }
