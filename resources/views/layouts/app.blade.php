@@ -10,9 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -60,18 +58,14 @@
             cursor: pointer;
         }
 
-        .menu-btn i {
-            margin-right: 6px;
-        }
+        .menu-btn i { margin-right: 6px; }
 
         .menu-btn.active {
             background: #eff6ff;
             box-shadow: inset 0 -3px 0 #1e3a8a;
         }
 
-        .page {
-            padding: 28px 36px;
-        }
+        .page { padding: 28px 36px; }
 
         .card {
             background: white;
@@ -114,9 +108,7 @@
             gap: 14px;
         }
 
-        .full {
-            grid-column: 1 / -1;
-        }
+        .full { grid-column: 1 / -1; }
 
         label {
             display: block;
@@ -125,9 +117,7 @@
             color: #334155;
         }
 
-        input,
-        select,
-        textarea {
+        input, select, textarea {
             width: 100%;
             border: 1px solid #d6deec;
             border-radius: 10px;
@@ -143,9 +133,7 @@
             resize: vertical;
         }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
+        input:focus, select:focus, textarea:focus {
             border-color: #1e3a8a;
             background: white;
             box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
@@ -195,9 +183,7 @@
             font-size: 14px;
         }
 
-        .btn-detail,
-        .btn-edit,
-        .btn-delete {
+        .btn-detail, .btn-edit, .btn-delete {
             width: 38px;
             height: 38px;
             border-radius: 11px;
@@ -253,28 +239,18 @@
         }
 
         @media (max-width: 900px) {
-            .navbar,
-            .menu,
-            .page {
+            .navbar, .menu, .page {
                 padding-left: 18px;
                 padding-right: 18px;
             }
 
-            .menu {
-                flex-wrap: wrap;
-            }
+            .menu { flex-wrap: wrap; }
 
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
+            .form-grid { grid-template-columns: 1fr; }
 
-            table {
-                min-width: 900px;
-            }
+            table { min-width: 900px; }
 
-            .card {
-                overflow-x: auto;
-            }
+            .card { overflow-x: auto; }
         }
     </style>
 </head>

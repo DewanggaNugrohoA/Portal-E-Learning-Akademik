@@ -16,4 +16,5 @@ Route::apiResource('siswa', SiswaController::class);
 Route::apiResource('guru', GuruController::class);
 Route::apiResource('materi', MateriController::class);
 Route::apiResource('nilai', NilaiController::class);
+
 Route::get('/guru-list', [NilaiController::class, 'guru']);

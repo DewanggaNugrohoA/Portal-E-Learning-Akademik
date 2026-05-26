@@ -8,8 +8,16 @@ use Illuminate\Support\Facades\File;
 
 class MateriController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data materi berhasil ditampilkan.',
+                'data' => Materi::latest()->get(),
+            ]);
+        }
+
         $materis = Materi::latest()->paginate(10);
 
         return view('materi.index', compact('materis'));
@@ -49,7 +57,7 @@ class MateriController extends Controller
             $file->move($uploadPath, $fileName);
         }
 
-        Materi::create([
+        $materi = Materi::create([
             'judul_materi' => $request->judul_materi,
             'deskripsi' => $request->deskripsi,
             'nama_mata_pelajaran' => $request->nama_mata_pelajaran,
@@ -57,13 +65,29 @@ class MateriController extends Controller
             'file_materi' => $fileName,
         ]);
 
+        if ($request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data materi berhasil ditambahkan.',
+                'data' => $materi,
+            ], 201);
+        }
+
         return redirect()
             ->route('materi.index')
             ->with('success', 'Data materi berhasil ditambahkan.');
     }
 
-    public function show(Materi $materi)
+    public function show(Request $request, Materi $materi)
     {
+        if ($request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Detail materi berhasil ditampilkan.',
+                'data' => $materi,
+            ]);
+        }
+
         return view('materi.show', compact('materi'));
     }
 
@@ -115,12 +139,20 @@ class MateriController extends Controller
             'file_materi' => $fileName,
         ]);
 
+        if ($request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data materi berhasil diperbarui.',
+                'data' => $materi,
+            ]);
+        }
+
         return redirect()
             ->route('materi.index')
             ->with('success', 'Data materi berhasil diperbarui.');
     }
 
-    public function destroy(Materi $materi)
+    public function destroy(Request $request, Materi $materi)
     {
         $filePath = public_path('assets/uploads/materi/' . $materi->file_materi);
 
@@ -129,6 +161,13 @@ class MateriController extends Controller
         }
 
         $materi->delete();
+
+        if ($request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data materi berhasil dihapus.',
+            ]);
+        }
 
         return redirect()
             ->route('materi.index')
