@@ -7,7 +7,7 @@
     <div class="container">
         <div class="header">
             <h1>Data Siswa</h1>
-            <p>Data siswa ditampilkan menggunakan API dari endpoint /api/siswa.</p>
+            <p>Kelola data siswa menggunakan REST API Laravel.</p>
         </div>
 
         <div class="stat-grid">
@@ -17,151 +17,513 @@
             </div>
 
             <div class="stat-card">
-                <span>Modul</span>
-                <h2>Siswa</h2>
+                <span>Siswa Aktif</span>
+                <h2 id="totalAktif">0</h2>
             </div>
 
             <div class="stat-card">
-                <span>Penanggung Jawab</span>
-                <h2>Sevi</h2>
+                <span>Tidak Aktif</span>
+                <h2 id="totalTidakAktif">0</h2>
             </div>
         </div>
 
         <div class="panel">
-            <div class="toolbar">
-                <div>
-                    <h2 style="margin:0;">Daftar Siswa</h2>
-                    <p style="margin:6px 0 0; color:#64748b;">
-                        Kelola data siswa menggunakan API.
-                    </p>
+            <div id="tableSection">
+                <div class="toolbar">
+                    <input type="text" id="searchInput" placeholder="Cari NIS, nama, email, kelas, no HP, atau status...">
+
+                    <button type="button" class="btn btn-primary" id="btnTambah">
+                        <i class="fa-solid fa-plus"></i>
+                        Tambah Siswa
+                    </button>
                 </div>
 
-                <a href="{{ url('/siswa/create') }}" class="btn btn-primary">
-                    <i class="fa-solid fa-plus"></i>
-                    Tambah Siswa
-                </a>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>NIS</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Kelas</th>
+                                <th>Jenis Kelamin</th>
+                                <th>No HP</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="dataSiswa">
+                            <tr>
+                                <td colspan="9" class="empty">Memuat data siswa...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>NIS</th>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>Kelas</th>
-                            <th>Jenis Kelamin</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
+            <div id="formSection" style="display:none;">
+                <h3 id="formTitle">Tambah Siswa</h3>
 
-                    <tbody id="siswaTable">
-                        <tr>
-                            <td colspan="8" class="empty">Memuat data siswa...</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <form id="formSiswa">
+                    <input type="hidden" id="siswa_id">
+
+                    <label>NIS</label>
+                    <input type="text" id="nis" required>
+
+                    <label>Nama Siswa</label>
+                    <input type="text" id="nama" required>
+
+                    <label>Email</label>
+                    <input type="email" id="email" required>
+
+                    <label>Kelas</label>
+                    <input type="text" id="kelas" required>
+
+                    <label>Jenis Kelamin</label>
+                    <select id="jenis_kelamin" required>
+                        <option value="">-- Pilih Jenis Kelamin --</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+
+                    <label>Tanggal Lahir</label>
+                    <input type="date" id="tanggal_lahir">
+
+                    <label>No HP</label>
+                    <input type="text" id="no_hp">
+
+                    <label>Status</label>
+                    <select id="status" required>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Tidak Aktif">Tidak Aktif</option>
+                    </select>
+
+                    <label>Alamat</label>
+                    <textarea id="alamat"></textarea>
+
+                    <br><br>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-save"></i>
+                        Simpan
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" id="btnBatal">
+                        Batal
+                    </button>
+                </form>
             </div>
+
+            <div id="detailSection" style="display:none;"></div>
         </div>
     </div>
 </div>
+
+<style>
+.swal-modern {
+    border-radius: 28px !important;
+    padding: 28px !important;
+}
+
+.swal-confirm {
+    background: #1e3a8a !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 14px 22px !important;
+    font-weight: 700 !important;
+}
+
+.swal-danger {
+    background: #dc2626 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 14px 22px !important;
+    font-weight: 700 !important;
+}
+
+.swal-cancel {
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 14px 22px !important;
+    font-weight: 700 !important;
+}
+
+.swal2-actions {
+    gap: 12px !important;
+}
+</style>
 @endsection
 
 @section('scripts')
 <script>
-    const siswaTable = document.getElementById('siswaTable');
-    const totalSiswa = document.getElementById('totalSiswa');
-
-    async function loadSiswa() {
-        try {
-            const response = await fetch('/api/siswa', {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            const result = await response.json();
-            const data = result.data ?? [];
-
-            siswaTable.innerHTML = '';
-            totalSiswa.textContent = data.length;
-
-            if (data.length === 0) {
-                siswaTable.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="empty">Belum ada data siswa.</td>
-                    </tr>
-                `;
-                return;
-            }
-
-            data.forEach((siswa, index) => {
-                const statusBadge = siswa.status === 'Aktif'
-                    ? `<span class="badge badge-blue">Aktif</span>`
-                    : `<span class="badge badge-red">Tidak Aktif</span>`;
-
-                siswaTable.innerHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${siswa.nis ?? '-'}</td>
-                        <td><strong>${siswa.nama ?? '-'}</strong></td>
-                        <td>${siswa.email ?? '-'}</td>
-                        <td>${siswa.kelas ?? '-'}</td>
-                        <td>${siswa.jenis_kelamin ?? '-'}</td>
-                        <td>${statusBadge}</td>
-                        <td>
-                            <div class="action-group">
-                                <a href="/siswa/${siswa.id}" class="btn btn-detail">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-
-                                <a href="/siswa/${siswa.id}/edit" class="btn btn-edit">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
-
-                                <button type="button" onclick="deleteSiswa(${siswa.id})" class="btn btn-delete">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-        } catch (error) {
-            siswaTable.innerHTML = `
-                <tr>
-                    <td colspan="8" class="empty">Gagal memuat data siswa.</td>
-                </tr>
-            `;
-        }
-    }
-
-    async function deleteSiswa(id) {
-        const konfirmasi = confirm('Yakin ingin menghapus data siswa ini?');
-
-        if (!konfirmasi) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/siswa/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            const result = await response.json();
-
-            alert(result.message);
-            loadSiswa();
-        } catch (error) {
-            alert('Gagal menghapus data siswa.');
-        }
-    }
+$(document).ready(function () {
+    var apiUrl = '/api/siswa';
+    var siswaList = [];
 
     loadSiswa();
+
+    function loadSiswa() {
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                siswaList = response.data || [];
+                updateStats(siswaList);
+                renderTable(siswaList);
+            },
+            error: function () {
+                $('#dataSiswa').html(
+                    '<tr><td colspan="9" class="empty" style="color:#dc2626;">Gagal memuat data siswa.</td></tr>'
+                );
+            }
+        });
+    }
+
+    function updateStats(data) {
+        var aktif = 0;
+        var tidakAktif = 0;
+
+        $.each(data, function (index, siswa) {
+            if (siswa.status === 'Aktif') aktif++;
+            if (siswa.status === 'Tidak Aktif') tidakAktif++;
+        });
+
+        $('#totalSiswa').text(data.length);
+        $('#totalAktif').text(aktif);
+        $('#totalTidakAktif').text(tidakAktif);
+    }
+
+    function safeHtml(value) {
+        if (value === null || value === undefined || value === '') {
+            return '-';
+        }
+
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function showSuccessPopup(title, message) {
+        Swal.fire({
+            title: title,
+            html: '<p style="color:#64748b; margin:0; font-size:15px; line-height:1.6;">' + message + '</p>',
+            icon: 'success',
+            width: '480px',
+            background: '#ffffff',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'swal-modern',
+                confirmButton: 'swal-confirm'
+            },
+            confirmButtonText: '<i class="fa-solid fa-check"></i> Oke'
+        });
+    }
+
+    function showErrorPopup(title, message) {
+        Swal.fire({
+            title: title,
+            html: '<p style="color:#64748b; margin:0; font-size:15px; line-height:1.6;">' + message + '</p>',
+            icon: 'error',
+            width: '480px',
+            background: '#ffffff',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'swal-modern',
+                confirmButton: 'swal-danger'
+            },
+            confirmButtonText: '<i class="fa-solid fa-xmark"></i> Tutup'
+        });
+    }
+
+    function renderTable(data) {
+        var rows = '';
+
+        if (data.length === 0) {
+            rows = '<tr><td colspan="9" class="empty">Belum ada data siswa.</td></tr>';
+        } else {
+            $.each(data, function (index, siswa) {
+                var statusBadge = siswa.status === 'Aktif'
+                    ? '<span class="badge badge-blue">Aktif</span>'
+                    : '<span class="badge badge-red">Tidak Aktif</span>';
+
+                rows +=
+                    '<tr>' +
+                        '<td>' + (index + 1) + '</td>' +
+                        '<td>' + safeHtml(siswa.nis) + '</td>' +
+                        '<td><strong>' + safeHtml(siswa.nama) + '</strong></td>' +
+                        '<td>' + safeHtml(siswa.email) + '</td>' +
+                        '<td>' + safeHtml(siswa.kelas) + '</td>' +
+                        '<td>' + safeHtml(siswa.jenis_kelamin) + '</td>' +
+                        '<td>' + safeHtml(siswa.no_hp) + '</td>' +
+                        '<td>' + statusBadge + '</td>' +
+                        '<td>' +
+                            '<div class="action-group">' +
+                                '<button type="button" class="btn btn-detail btn-icon btnDetail" data-id="' + siswa.id + '">' +
+                                    '<i class="fa-solid fa-eye"></i>' +
+                                '</button>' +
+                                '<button type="button" class="btn btn-edit btn-icon btnEdit" data-id="' + siswa.id + '">' +
+                                    '<i class="fa-solid fa-pen-to-square"></i>' +
+                                '</button>' +
+                                '<button type="button" class="btn btn-delete btn-icon btnHapus" data-id="' + siswa.id + '">' +
+                                    '<i class="fa-solid fa-trash"></i>' +
+                                '</button>' +
+                            '</div>' +
+                        '</td>' +
+                    '</tr>';
+            });
+        }
+
+        $('#dataSiswa').html(rows);
+    }
+
+    function showTable() {
+        $('#tableSection').show();
+        $('#formSection').hide();
+        $('#detailSection').hide();
+    }
+
+    function showForm() {
+        $('#tableSection').hide();
+        $('#formSection').show();
+        $('#detailSection').hide();
+    }
+
+    function showDetail() {
+        $('#tableSection').hide();
+        $('#formSection').hide();
+        $('#detailSection').show();
+    }
+
+    function resetForm() {
+        $('#formSiswa')[0].reset();
+        $('#siswa_id').val('');
+        $('#status').val('Aktif');
+    }
+
+    $('#btnTambah').on('click', function () {
+        resetForm();
+        $('#formTitle').text('Tambah Siswa');
+        showForm();
+    });
+
+    $('#btnBatal').on('click', function () {
+        resetForm();
+        showTable();
+    });
+
+    $('#formSiswa').on('submit', function (e) {
+        e.preventDefault();
+
+        var id = $('#siswa_id').val();
+        var method = id ? 'PUT' : 'POST';
+        var url = id ? apiUrl + '/' + id : apiUrl;
+
+        var dataForm = {
+            nis: $('#nis').val(),
+            nama: $('#nama').val(),
+            email: $('#email').val(),
+            kelas: $('#kelas').val(),
+            jenis_kelamin: $('#jenis_kelamin').val(),
+            tanggal_lahir: $('#tanggal_lahir').val(),
+            no_hp: $('#no_hp').val(),
+            status: $('#status').val(),
+            alamat: $('#alamat').val()
+        };
+
+        Swal.fire({
+            title: id ? 'Update Data Siswa?' : 'Simpan Data Siswa?',
+            html: '<p style="color:#64748b; font-size:15px;">Pastikan data siswa sudah benar sebelum disimpan.</p>',
+            width: '520px',
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa-solid fa-save"></i> Ya, Simpan',
+            cancelButtonText: '<i class="fa-solid fa-xmark"></i> Batal',
+            reverseButtons: true,
+            background: '#ffffff',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'swal-modern',
+                confirmButton: 'swal-confirm',
+                cancelButton: 'swal-cancel'
+            }
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: url,
+                    type: method,
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    data: dataForm,
+                    success: function (response) {
+                        resetForm();
+                        showTable();
+                        loadSiswa();
+
+                        showSuccessPopup(
+                            'Berhasil!',
+                            response.message || 'Data siswa berhasil disimpan.'
+                        );
+                    },
+                    error: function (xhr) {
+                        var message = 'Data siswa gagal disimpan. Periksa kembali form.';
+
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            message = Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
+
+                        showErrorPopup('Gagal!', message);
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.btnDetail', function () {
+        var id = $(this).data('id');
+
+        $.ajax({
+            url: apiUrl + '/' + id,
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                var siswa = response.data;
+
+                $('#detailSection').html(
+                    '<h3>Detail Siswa</h3>' +
+                    '<p><b>NIS:</b> ' + safeHtml(siswa.nis) + '</p>' +
+                    '<p><b>Nama:</b> ' + safeHtml(siswa.nama) + '</p>' +
+                    '<p><b>Email:</b> ' + safeHtml(siswa.email) + '</p>' +
+                    '<p><b>Kelas:</b> ' + safeHtml(siswa.kelas) + '</p>' +
+                    '<p><b>Jenis Kelamin:</b> ' + safeHtml(siswa.jenis_kelamin) + '</p>' +
+                    '<p><b>Tanggal Lahir:</b> ' + safeHtml(siswa.tanggal_lahir) + '</p>' +
+                    '<p><b>No HP:</b> ' + safeHtml(siswa.no_hp) + '</p>' +
+                    '<p><b>Status:</b> ' + safeHtml(siswa.status) + '</p>' +
+                    '<p><b>Alamat:</b> ' + safeHtml(siswa.alamat) + '</p>' +
+                    '<br>' +
+                    '<button type="button" class="btn btn-primary btnEdit" data-id="' + siswa.id + '">Edit</button> ' +
+                    '<button type="button" class="btn btn-secondary" id="btnKembaliDetail">Kembali</button>'
+                );
+
+                showDetail();
+            },
+            error: function () {
+                showErrorPopup('Gagal!', 'Detail siswa gagal dimuat.');
+            }
+        });
+    });
+
+    $(document).on('click', '#btnKembaliDetail', function () {
+        showTable();
+    });
+
+    $(document).on('click', '.btnEdit', function () {
+        var id = $(this).data('id');
+
+        $.ajax({
+            url: apiUrl + '/' + id,
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                var siswa = response.data;
+
+                $('#formTitle').text('Edit Siswa');
+                $('#siswa_id').val(siswa.id);
+                $('#nis').val(siswa.nis);
+                $('#nama').val(siswa.nama);
+                $('#email').val(siswa.email);
+                $('#kelas').val(siswa.kelas);
+                $('#jenis_kelamin').val(siswa.jenis_kelamin);
+                $('#tanggal_lahir').val(siswa.tanggal_lahir);
+                $('#no_hp').val(siswa.no_hp);
+                $('#status').val(siswa.status);
+                $('#alamat').val(siswa.alamat);
+
+                showForm();
+            },
+            error: function () {
+                showErrorPopup('Gagal!', 'Data siswa gagal dimuat.');
+            }
+        });
+    });
+
+    $(document).on('click', '.btnHapus', function () {
+        var id = $(this).data('id');
+
+        Swal.fire({
+            title: 'Hapus Data Siswa?',
+            html: '<p style="color:#64748b; font-size:15px;">Data siswa yang dihapus tidak dapat dikembalikan.</p>',
+            width: '520px',
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa-solid fa-trash"></i> Ya, Hapus',
+            cancelButtonText: '<i class="fa-solid fa-xmark"></i> Batal',
+            reverseButtons: true,
+            background: '#ffffff',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'swal-modern',
+                confirmButton: 'swal-danger',
+                cancelButton: 'swal-cancel'
+            }
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: apiUrl + '/' + id,
+                    type: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    success: function (response) {
+                        loadSiswa();
+
+                        showSuccessPopup(
+                            'Berhasil Dihapus!',
+                            response.message || 'Data siswa berhasil dihapus.'
+                        );
+                    },
+                    error: function () {
+                        showErrorPopup('Gagal!', 'Data siswa gagal dihapus.');
+                    }
+                });
+            }
+        });
+    });
+
+    $('#searchInput').on('keyup', function () {
+        var keyword = $(this).val().toLowerCase();
+
+        var filtered = siswaList.filter(function (siswa) {
+            var gabungan =
+                String(siswa.nis || '') + ' ' +
+                String(siswa.nama || '') + ' ' +
+                String(siswa.email || '') + ' ' +
+                String(siswa.kelas || '') + ' ' +
+                String(siswa.jenis_kelamin || '') + ' ' +
+                String(siswa.no_hp || '') + ' ' +
+                String(siswa.status || '');
+
+            return gabungan.toLowerCase().indexOf(keyword) !== -1;
+        });
+
+        renderTable(filtered);
+    });
+});
 </script>
 @endsection

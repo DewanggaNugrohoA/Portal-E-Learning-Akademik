@@ -7,7 +7,7 @@
     <div class="container-small">
         <div class="header">
             <h1>Detail Data Siswa</h1>
-            <p>Detail siswa ditampilkan menggunakan API endpoint /api/siswa/{id}.</p>
+            <p>Detail siswa ditampilkan menggunakan API endpoint /api/siswa/{{ $id }}.</p>
         </div>
 
         <div class="profile-card" id="detailSiswa">
@@ -37,9 +37,7 @@
     async function loadDetailSiswa() {
         try {
             const response = await fetch(`/api/siswa/${siswaId}`, {
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             });
 
             const result = await response.json();
@@ -51,10 +49,6 @@
 
             const siswa = result.data;
 
-            const statusBadge = siswa.status === 'Aktif'
-                ? `<span class="badge badge-blue">Aktif</span>`
-                : `<span class="badge badge-red">Tidak Aktif</span>`;
-
             detailSiswa.innerHTML = `
                 <div class="profile-top">
                     <div class="detail-avatar">
@@ -64,10 +58,6 @@
                     <div class="profile-info">
                         <h2>${siswa.nama ?? '-'}</h2>
                         <p>${siswa.nis ?? '-'} • ${siswa.kelas ?? '-'}</p>
-
-                        <div class="badge-row">
-                            ${statusBadge}
-                        </div>
                     </div>
                 </div>
 

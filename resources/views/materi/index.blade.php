@@ -30,7 +30,7 @@
         <div class="panel">
             <div class="toolbar">
                 <div>
-                    <h2 style="margin:0;">Daftar Materi</h2>
+                    <h2>Daftar Materi</h2>
                     <p style="margin:6px 0 0; color:#64748b;">
                         Kelola data materi, mata pelajaran, guru, dan file pembelajaran.
                     </p>
@@ -117,7 +117,7 @@
                         <td>${index + 1}</td>
 
                         <td>
-                            <strong>${materi.judul_materi}</strong>
+                            <strong>${materi.judul_materi ?? '-'}</strong>
                             <div style="color:#64748b; font-size:13px; margin-top:4px;">
                                 ${deskripsi}
                             </div>

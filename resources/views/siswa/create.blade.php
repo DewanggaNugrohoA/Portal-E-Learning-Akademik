@@ -5,17 +5,14 @@
 @section('content')
 <div class="page">
     <div class="container-small">
-
         <div class="header">
             <h1>Tambah Data Siswa</h1>
-            <p>Form tambah data siswa menggunakan REST API Laravel.</p>
+            <p>Data siswa akan disimpan menggunakan API endpoint /api/siswa.</p>
         </div>
 
         <div class="panel">
             <form id="createSiswaForm">
-
                 <div class="form-grid">
-
                     <div class="form-group">
                         <label>NIS</label>
                         <input type="text" name="nis" placeholder="Masukkan NIS" required>
@@ -65,9 +62,8 @@
 
                     <div class="form-group full">
                         <label>Alamat</label>
-                        <textarea name="alamat" rows="4" placeholder="Masukkan alamat siswa"></textarea>
+                        <textarea name="alamat" placeholder="Masukkan alamat siswa"></textarea>
                     </div>
-
                 </div>
 
                 <div class="actions">
@@ -81,58 +77,48 @@
                         Simpan Siswa
                     </button>
                 </div>
-
             </form>
         </div>
-
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-document.getElementById('createSiswaForm').addEventListener('submit', async function(e) {
+    document.getElementById('createSiswaForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    e.preventDefault();
+        const formData = new FormData(e.target);
 
-    const formData = new window.FormData(e.target);
+        try {
+            const response = await fetch('/api/siswa', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-    try {
+            const result = await response.json();
 
-        const response = await fetch('/api/siswa', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
+            if (!response.ok) {
+                let message = 'Gagal menyimpan data siswa.';
+
+                if (result.errors) {
+                    message = Object.values(result.errors).flat().join('\n');
+                } else if (result.message) {
+                    message = result.message;
+                }
+
+                alert(message);
+                return;
             }
-        });
 
-        const result = await response.json();
-
-        if (!response.ok) {
-
-            let message = 'Gagal menambahkan data siswa';
-
-            if (result.errors) {
-                message = Object.values(result.errors)
-                    .flat()
-                    .join('\n');
-            }
-
-            alert(message);
-            return;
+            alert(result.message ?? 'Data siswa berhasil ditambahkan.');
+            window.location.href = '/siswa';
+        } catch (error) {
+            alert('Terjadi kesalahan saat menyimpan data siswa.');
         }
-
-        alert(result.message);
-
-        window.location.href = '/siswa';
-
-    } catch (error) {
-
-        alert('Terjadi kesalahan server');
-
-    }
-
-});
+    });
 </script>
 @endsection

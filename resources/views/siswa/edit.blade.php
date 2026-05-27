@@ -5,17 +5,14 @@
 @section('content')
 <div class="page">
     <div class="container-small">
-
         <div class="header">
             <h1>Edit Data Siswa</h1>
-            <p>Form edit data siswa menggunakan REST API Laravel.</p>
+            <p>Data siswa akan diperbarui menggunakan API endpoint /api/siswa/{{ $id }}.</p>
         </div>
 
         <div class="panel">
             <form id="editSiswaForm">
-
                 <div class="form-grid">
-
                     <div class="form-group">
                         <label>NIS</label>
                         <input type="text" name="nis" id="nis" required>
@@ -65,13 +62,11 @@
 
                     <div class="form-group full">
                         <label>Alamat</label>
-                        <textarea name="alamat" id="alamat" rows="4"></textarea>
+                        <textarea name="alamat" id="alamat"></textarea>
                     </div>
-
                 </div>
 
                 <div class="actions">
-
                     <a href="{{ url('/siswa') }}" class="btn btn-secondary">
                         <i class="fa-solid fa-arrow-left"></i>
                         Kembali
@@ -81,114 +76,83 @@
                         <i class="fa-solid fa-save"></i>
                         Update Siswa
                     </button>
-
                 </div>
-
             </form>
         </div>
-
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
+    const siswaId = "{{ $id }}";
 
-const siswaId = "{{ $id }}";
+    async function loadDetailSiswa() {
+        try {
+            const response = await fetch(`/api/siswa/${siswaId}`, {
+                headers: { 'Accept': 'application/json' }
+            });
 
-async function loadDetailSiswa() {
+            const result = await response.json();
 
-    try {
-
-        const response = await fetch(`/api/siswa/${siswaId}`, {
-            headers: {
-                'Accept': 'application/json'
+            if (!response.ok) {
+                alert(result.message ?? 'Data siswa tidak ditemukan.');
+                window.location.href = '/siswa';
+                return;
             }
-        });
 
-        const result = await response.json();
+            const siswa = result.data;
 
-        if (!response.ok) {
-
-            alert(result.message || 'Data siswa tidak ditemukan');
-
+            document.getElementById('nis').value = siswa.nis ?? '';
+            document.getElementById('nama').value = siswa.nama ?? '';
+            document.getElementById('email').value = siswa.email ?? '';
+            document.getElementById('kelas').value = siswa.kelas ?? '';
+            document.getElementById('jenis_kelamin').value = siswa.jenis_kelamin ?? '';
+            document.getElementById('tanggal_lahir').value = siswa.tanggal_lahir ?? '';
+            document.getElementById('no_hp').value = siswa.no_hp ?? '';
+            document.getElementById('status').value = siswa.status ?? 'Aktif';
+            document.getElementById('alamat').value = siswa.alamat ?? '';
+        } catch (error) {
+            alert('Gagal memuat data siswa.');
             window.location.href = '/siswa';
-
-            return;
         }
-
-        const siswa = result.data;
-
-        document.getElementById('nis').value = siswa.nis ?? '';
-        document.getElementById('nama').value = siswa.nama ?? '';
-        document.getElementById('email').value = siswa.email ?? '';
-        document.getElementById('kelas').value = siswa.kelas ?? '';
-        document.getElementById('jenis_kelamin').value = siswa.jenis_kelamin ?? '';
-        document.getElementById('tanggal_lahir').value = siswa.tanggal_lahir ?? '';
-        document.getElementById('no_hp').value = siswa.no_hp ?? '';
-        document.getElementById('status').value = siswa.status ?? 'Aktif';
-        document.getElementById('alamat').value = siswa.alamat ?? '';
-
-    } catch (error) {
-
-        alert('Gagal memuat data siswa');
-
-        window.location.href = '/siswa';
-
     }
 
-}
+    document.getElementById('editSiswaForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-document.getElementById('editSiswaForm').addEventListener('submit', async function(e) {
+        const formData = new FormData(e.target);
+        formData.append('_method', 'PUT');
 
-    e.preventDefault();
+        try {
+            const response = await fetch(`/api/siswa/${siswaId}`, {
+                method: 'POST',
+                body: formData,
+                headers: { 'Accept': 'application/json' }
+            });
 
-    const formData = new window.FormData(e.target);
+            const result = await response.json();
 
-    formData.append('_method', 'PUT');
+            if (!response.ok) {
+                let message = 'Gagal memperbarui data siswa.';
 
-    try {
+                if (result.errors) {
+                    message = Object.values(result.errors).flat().join('\n');
+                } else if (result.message) {
+                    message = result.message;
+                }
 
-        const response = await fetch(`/api/siswa/${siswaId}`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-
-            let message = 'Gagal memperbarui data siswa';
-
-            if (result.errors) {
-
-                message = Object.values(result.errors)
-                    .flat()
-                    .join('\n');
-
+                alert(message);
+                return;
             }
 
-            alert(message);
-
-            return;
+            alert(result.message ?? 'Data siswa berhasil diperbarui.');
+            window.location.href = '/siswa';
+        } catch (error) {
+            alert('Terjadi kesalahan saat memperbarui data siswa.');
         }
+    });
 
-        alert(result.message);
-
-        window.location.href = '/siswa';
-
-    } catch (error) {
-
-        alert('Terjadi kesalahan server');
-
-    }
-
-});
-
-loadDetailSiswa();
-
+    loadDetailSiswa();
 </script>
 @endsection
