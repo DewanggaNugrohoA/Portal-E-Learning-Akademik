@@ -14,12 +14,12 @@
         <p class="sidebar-title">MENU UTAMA</p>
 
         <div class="sidebar-menu">
-            <a href="#" class="menu-link active" data-url="/" data-module="dashboard">
+            <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">
                 <i class="fa-solid fa-house"></i>
                 <span>Dashboard</span>
             </a>
 
-            <a href="#" class="menu-link" data-url="/materi" data-module="materi">
+            <a href="{{ url('/materi') }}" class="{{ request()->is('materi*') ? 'active' : '' }}">
                 <i class="fa-solid fa-book"></i>
                 <span>Materi</span>
             </a>
@@ -30,22 +30,22 @@
         <p class="sidebar-title">MODUL ANGGOTA</p>
 
         <div class="sidebar-menu">
-            <a href="#" class="menu-link" data-url="/siswa" data-module="siswa">
+            <a href="{{ url('/siswa') }}" class="{{ request()->is('siswa*') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-graduate"></i>
                 <span>Siswa</span>
             </a>
 
-            <a href="#" class="menu-link" data-url="/guru" data-module="guru">
+            <a href="{{ url('/guru') }}" class="{{ request()->is('guru*') ? 'active' : '' }}">
                 <i class="fa-solid fa-chalkboard-user"></i>
                 <span>Guru</span>
             </a>
 
-            <a href="#" class="menu-link" data-url="/mata-pelajaran" data-module="mata-pelajaran">
+            <a href="{{ url('/mata-pelajaran') }}" class="{{ request()->is('mata-pelajaran*') ? 'active' : '' }}">
                 <i class="fa-solid fa-book-open"></i>
                 <span>Mata Pelajaran</span>
             </a>
 
-            <a href="#" class="menu-link" data-url="/nilai" data-module="nilai">
+            <a href="{{ url('/nilai') }}" class="{{ request()->is('nilai*') ? 'active' : '' }}">
                 <i class="fa-solid fa-chart-line"></i>
                 <span>Nilai</span>
             </a>

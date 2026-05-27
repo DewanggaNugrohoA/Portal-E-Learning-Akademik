@@ -1,3 +1,8 @@
+@extends('layouts.app')
+
+@section('title', 'Data Nilai')
+
+@section('content')
 <div class="page">
     <div class="container">
         <div class="header">
@@ -65,7 +70,10 @@
                         <i class="fa-solid fa-save"></i>
                         Simpan
                     </button>
-                    <button type="button" class="btn btn-secondary" id="btnBatal">Batal</button>
+
+                    <button type="button" class="btn btn-secondary" id="btnBatal">
+                        Batal
+                    </button>
                 </form>
             </div>
 
@@ -75,54 +83,56 @@
 </div>
 
 <style>
-.swal-modern {
-    border-radius: 28px !important;
-    padding: 28px !important;
-}
+    .swal-modern {
+        border-radius: 28px !important;
+        padding: 28px !important;
+    }
 
-.swal-confirm {
-    background: #1e3a8a !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 22px !important;
-    font-weight: 700 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    box-shadow: 0 10px 25px rgba(30, 58, 138, 0.25);
-}
+    .swal-confirm {
+        background: #1e3a8a !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 14px 22px !important;
+        font-weight: 700 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        box-shadow: 0 10px 25px rgba(30, 58, 138, 0.25);
+    }
 
-.swal-danger {
-    background: #dc2626 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 22px !important;
-    font-weight: 700 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.25);
-}
+    .swal-danger {
+        background: #dc2626 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 14px 22px !important;
+        font-weight: 700 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        box-shadow: 0 10px 25px rgba(220, 38, 38, 0.25);
+    }
 
-.swal-cancel {
-    background: #f1f5f9 !important;
-    color: #334155 !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 22px !important;
-    font-weight: 700 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-}
+    .swal-cancel {
+        background: #f1f5f9 !important;
+        color: #334155 !important;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 14px 22px !important;
+        font-weight: 700 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
 
-.swal2-actions {
-    gap: 12px !important;
-}
+    .swal2-actions {
+        gap: 12px !important;
+    }
 </style>
+@endsection
 
+@section('scripts')
 <script>
 $(document).ready(function () {
     var apiUrl = '/api/nilai';
@@ -567,3 +577,4 @@ $(document).ready(function () {
     });
 });
 </script>
+@endsection

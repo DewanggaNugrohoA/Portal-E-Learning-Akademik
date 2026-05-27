@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-        * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box; 
+        }
 
         :root {
             --primary: #1e3a8a;
@@ -34,7 +36,9 @@
             font-size: 14px;
         }
 
-        a { text-decoration: none; }
+        a { 
+            text-decoration: none; 
+        }
 
         .admin-wrapper {
             min-height: 100vh;
@@ -82,7 +86,9 @@
             color: #94a3b8;
         }
 
-        .sidebar-section { margin-bottom: 24px; }
+        .sidebar-section { 
+            margin-bottom: 24px; 
+        }
 
         .sidebar-title {
             font-size: 11px;
@@ -121,40 +127,9 @@
             min-width: 0;
         }
 
-        .navbar {
-            height: 72px;
-            background: white;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 32px;
-            position: sticky;
-            top: 0;
-            z-index: 40;
+        .page { 
+            padding: 32px; 
         }
-
-        .navbar-left h1 {
-            margin: 0;
-            font-size: 20px;
-        }
-
-        .navbar-left p {
-            margin: 4px 0 0;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .admin-badge {
-            background: var(--primary-soft);
-            color: var(--primary);
-            padding: 9px 13px;
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .page { padding: 32px; }
 
         .container {
             max-width: 1200px;
@@ -240,7 +215,6 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 14px;
-            flex-wrap: wrap;
             margin-bottom: 18px;
         }
 
@@ -299,6 +273,7 @@
             justify-content: center;
             gap: 7px;
             font-weight: 500;
+            font-family: inherit;
         }
 
         .btn-primary,
@@ -451,7 +426,9 @@
             gap: 18px;
         }
 
-        .section h3 { margin-top: 0; }
+        .section h3 { 
+            margin-top: 0; 
+        }
 
         .data-grid {
             display: grid;
@@ -524,12 +501,6 @@
                 margin-left: 0;
             }
 
-            .navbar {
-                position: static;
-                padding: 14px 20px;
-                height: auto;
-            }
-
             .page {
                 padding: 20px 14px;
             }
@@ -562,60 +533,11 @@
     @include('layouts.sidebar')
 
     <main class="main-content">
-        @include('layouts.navbar')
-
-        <div id="main-container">
-            @yield('content')
-        </div>
+        @yield('content')
     </main>
 </div>
 
 @yield('scripts')
-
-<script>
-$(document).ready(function () {
-    $(document).on('click', '.menu-link', function (e) {
-        e.preventDefault();
-
-        var url = $(this).data('url');
-        var module = $(this).data('module');
-
-        $('.menu-link').removeClass('active');
-        $('.menu-link[data-module="' + module + '"]').addClass('active');
-
-        $.ajax({
-            url: url,
-            type: 'GET',
-            success: function (html) {
-                var content = $(html).find('#main-container').html();
-
-                if (content) {
-                    $('#main-container').html(content);
-                } else {
-                    $('#main-container').html(html);
-                }
-
-                if (module === 'nilai' && typeof initNilai === 'function') initNilai();
-                if (module === 'siswa' && typeof initSiswa === 'function') initSiswa();
-                if (module === 'guru' && typeof initGuru === 'function') initGuru();
-                if (module === 'materi' && typeof initMateri === 'function') initMateri();
-                if (module === 'mata-pelajaran' && typeof initMataPelajaran === 'function') initMataPelajaran();
-            },
-            error: function () {
-                alert('Halaman gagal dimuat.');
-            }
-        });
-    });
-});
-</script>
-
-<script>
-window.initNilai = window.initNilai || function(){};
-window.initSiswa = window.initSiswa || function(){};
-window.initGuru = window.initGuru || function(){};
-window.initMateri = window.initMateri || function(){};
-window.initMataPelajaran = window.initMataPelajaran || function(){};
-</script>
 
 </body>
 </html>

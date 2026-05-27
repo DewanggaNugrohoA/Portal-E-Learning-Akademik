@@ -1,3 +1,8 @@
+@extends('layouts.app')
+
+@section('title', 'Data Materi')
+
+@section('content')
 <div class="page">
     <div class="container">
         <div class="header">
@@ -25,7 +30,7 @@
         <div class="panel">
             <div class="toolbar">
                 <div>
-                    <h2 style="margin:0;">Daftar Materi</h2>
+                    <h2>Daftar Materi</h2>
                     <p style="margin:6px 0 0; color:#64748b;">
                         Kelola data materi, mata pelajaran, guru, dan file pembelajaran.
                     </p>
@@ -61,7 +66,9 @@
         </div>
     </div>
 </div>
+@endsection
 
+@section('scripts')
 <script>
     const materiTable = document.getElementById('materiTable');
     const totalMateri = document.getElementById('totalMateri');
@@ -102,7 +109,7 @@
                     ? `<a href="/assets/uploads/materi/${materi.file_materi}" target="_blank" class="btn btn-detail">
                             <i class="fa-solid fa-file"></i>
                             Lihat File
-                            </a>`
+                       </a>`
                     : `<span class="badge badge-red">Tidak ada file</span>`;
 
                 materiTable.innerHTML += `
@@ -110,7 +117,7 @@
                         <td>${index + 1}</td>
 
                         <td>
-                            <strong>${materi.judul_materi}</strong>
+                            <strong>${materi.judul_materi ?? '-'}</strong>
                             <div style="color:#64748b; font-size:13px; margin-top:4px;">
                                 ${deskripsi}
                             </div>
@@ -181,3 +188,4 @@
 
     loadMateri();
 </script>
+@endsection
