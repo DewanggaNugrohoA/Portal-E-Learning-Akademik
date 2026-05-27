@@ -1,99 +1,165 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Tambah Nilai</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-</head>
-<body>
-    <h2>Tambah Data Nilai</h2>
-    <p>Modul Nilai - Karina Hodiyah Ramadona</p>
+@extends('layouts.app')
 
-    <form id="formNilai">
-        <label>Guru</label><br>
-        <select id="guru_id" required>
-            <option value="">--Pilih Guru--</option>
-        </select>
-        
-        <br><br>
-        
-        <label>KKM</label><br>
-        <input type="number" id="kkm" min="0" max="100" required>
-            <br><br>
+@section('title', 'Tambah Nilai')
 
-            <label>Deskripsi Predikat A</label><br>
-            <textarea id="deskripsi_a" required></textarea>
+@section('content')
+<div class="page">
+    <div class="container-small">
+        <div class="header">
+            <h1>Tambah Data Nilai</h1>
+            <p>Tambahkan data nilai baru pada Portal E-Learning Akademik.</p>
+        </div>
 
-            <br><br>
+        <div class="card">
+            <div class="info-box">
+                Pastikan guru dan nilai KKM sudah sesuai sebelum data disimpan.
+            </div>
 
-            <label>Deskripsi Predikat B</label><br>
-            <textarea id="deskripsi_b" required></textarea>
+            <form id="formNilai">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="guru_id">Guru</label>
+                        <select id="guru_id" required>
+                            <option value="">-- Pilih Guru --</option>
+                        </select>
+                    </div>
 
-            <br><br>
-            
-            <label>Deskripsi Predikat C</label><br>
-            <textarea id="deskripsi_c" required></textarea>
+                    <div class="form-group">
+                        <label for="kkm">KKM</label>
+                        <input type="number" id="kkm" min="0" max="100" placeholder="Contoh: 75" required>
+                    </div>
 
-            <br><br>
+                    <div class="form-group full">
+                        <label for="deskripsi_a">Deskripsi Predikat A</label>
+                        <textarea id="deskripsi_a" placeholder="Masukkan deskripsi predikat A" required></textarea>
+                    </div>
 
-            <label>Deskripsi Predikat D</label><br>
-            <textarea id="deskripsi_d" required></textarea>
+                    <div class="form-group full">
+                        <label for="deskripsi_b">Deskripsi Predikat B</label>
+                        <textarea id="deskripsi_b" placeholder="Masukkan deskripsi predikat B" required></textarea>
+                    </div>
 
-            <br><br>
+                    <div class="form-group full">
+                        <label for="deskripsi_c">Deskripsi Predikat C</label>
+                        <textarea id="deskripsi_c" placeholder="Masukkan deskripsi predikat C" required></textarea>
+                    </div>
 
-            <button type="submit">Simpan</button>
-            <a href="/nilai">Kembali</a>
-        </form>
+                    <div class="form-group full">
+                        <label for="deskripsi_d">Deskripsi Predikat D</label>
+                        <textarea id="deskripsi_d" placeholder="Masukkan deskripsi predikat D" required></textarea>
+                    </div>
+                </div>
 
-        <script>
-            $(document).ready(function () {
-                function loadGuru() {
-                    $.ajax({
-                        url: "/api/guru",
-                        type: "GET",
-                        success: function (response) {
-                            let options = `<option value="">--Pilih Guru--</option>`;
+                <div class="actions">
+                    <a href="/nilai" class="btn btn-secondary">Kembali</a>
+                    <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
 
-                            $.each(response.data, function (index, guru) {
-                                options += `<option value="${guru.id}">${guru.nama}</option>`;
-                            });
+@section('scripts')
+<script>
+$(document).ready(function () {
+    function loadGuru() {
+        $.ajax({
+            url: '/api/guru-list',
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                var options = '<option value="">-- Pilih Guru --</option>';
 
-                            $("#guru_id").html(options);
-                        },
-                        error: function () {
-                            alert("Gagal Memuat Data Guru");
-                        }
-                    });
-                }
+                $.each(response.data || [], function (index, guru) {
+                    options += '<option value="' + guru.id + '">' + guru.nama + '</option>';
+                });
 
-                $("#formNilai").submit(function (e) {
-                    e.preventDefault();
+                $('#guru_id').html(options);
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: 'Gagal memuat data guru.',
+                    icon: 'error',
+                    confirmButtonText: 'Coba Lagi',
+                    confirmButtonColor: '#B91C1C'
+                });
+            }
+        });
+    }
 
-                    const dataNilai = {
-                        guru_id: $("#guru_id").val(),
-                        kkm: $("#kkm").val(),
-                        deskripsi_a: $("#deskripsi_a").val(),
-                        deskripsi_b: $("#deskripsi_b").val(),
-                        deskripsi_c: $("#deskripsi_c").val(),
-                        deskripsi_d: $("#deskripsi_d").val(),
-                    };
+    $('#formNilai').submit(function (e) {
+        e.preventDefault();
 
-                    $.ajax({
-                        url: "/api/nilai",
-                        type: "POST",
-                        data: dataNilai,
-                        success: function (response) {
-                            alert("Data Nilai Berhasil Ditambahkan");
-                            window.location.href = "/nilai";
-                        },
-                        error: function () {
-                            alert("Gagal Menambahkan Data Nilai");
-                        }
+        var dataNilai = {
+            guru_id: $('#guru_id').val(),
+            kkm: $('#kkm').val(),
+            deskripsi_a: $('#deskripsi_a').val(),
+            deskripsi_b: $('#deskripsi_b').val(),
+            deskripsi_c: $('#deskripsi_c').val(),
+            deskripsi_d: $('#deskripsi_d').val()
+        };
+
+        $('#btnSimpan').prop('disabled', true).text('Menyimpan...');
+
+        $.ajax({
+            url: '/api/nilai',
+            type: 'POST',
+            data: dataNilai,
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: response.message || 'Data nilai berhasil ditambahkan.',
+                    icon: 'success',
+                    confirmButtonText: 'Oke',
+                    confirmButtonColor: '#1E3A8A'
+                }).then(function () {
+                    window.location.href = '/nilai';
+                });
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: getErrorMessage(xhr, 'Data nilai gagal ditambahkan.'),
+                    icon: 'error',
+                    confirmButtonText: 'Coba Lagi',
+                    confirmButtonColor: '#B91C1C'
+                });
+
+                $('#btnSimpan').prop('disabled', false).text('Simpan Data');
+            }
+        });
+    });
+
+    function getErrorMessage(xhr, defaultMessage) {
+        var pesan = defaultMessage;
+
+        if (xhr.responseJSON) {
+            if (xhr.responseJSON.errors) {
+                var list = [];
+
+                $.each(xhr.responseJSON.errors, function (key, values) {
+                    $.each(values, function (index, value) {
+                        list.push(value);
                     });
                 });
 
-                loadGuru();
-            });
-    </script>
-</body>
-</html>
+                pesan = list.join('\n');
+            } else if (xhr.responseJSON.message) {
+                pesan = xhr.responseJSON.message;
+            }
+        }
+
+        return pesan;
+    }
+
+    loadGuru();
+});
+</script>
+@endsection

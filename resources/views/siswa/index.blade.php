@@ -7,7 +7,7 @@
     <div class="container">
         <div class="header">
             <h1>Data Siswa</h1>
-            <p>Data siswa ditampilkan menggunakan API dari endpoint /api/siswa.</p>
+            <p>Kelola data siswa menggunakan REST API Laravel.</p>
         </div>
 
         <div class="stat-grid">
@@ -17,26 +17,21 @@
             </div>
 
             <div class="stat-card">
-                <span>Modul</span>
-                <h2>Siswa</h2>
+                <span>Siswa Aktif</span>
+                <h2 id="totalAktif">0</h2>
             </div>
 
             <div class="stat-card">
-                <span>Penanggung Jawab</span>
-                <h2>Sevi</h2>
+                <span>Tidak Aktif</span>
+                <h2 id="totalTidakAktif">0</h2>
             </div>
         </div>
 
         <div class="panel">
             <div class="toolbar">
-                <div>
-                    <h2 style="margin:0;">Daftar Siswa</h2>
-                    <p style="margin:6px 0 0; color:#64748b;">
-                        Kelola data siswa menggunakan API.
-                    </p>
-                </div>
+                <input type="text" id="searchSiswa" placeholder="Cari NIS, nama, email, kelas, no HP, atau status...">
 
-                <a href="{{ url('/siswa/create') }}" class="btn btn-primary">
+                <a href="/siswa/create" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>
                     Tambah Siswa
                 </a>
@@ -52,14 +47,15 @@
                             <th>Email</th>
                             <th>Kelas</th>
                             <th>Jenis Kelamin</th>
+                            <th>No HP</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
 
-                    <tbody id="siswaTable">
+                    <tbody id="dataSiswa">
                         <tr>
-                            <td colspan="8" class="empty">Memuat data siswa...</td>
+                            <td colspan="9" class="empty">Memuat data siswa...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -71,45 +67,79 @@
 
 @section('scripts')
 <script>
-    const siswaTable = document.getElementById('siswaTable');
-    const totalSiswa = document.getElementById('totalSiswa');
+$(document).ready(function () {
+    var apiUrl = '/api/siswa';
+    var siswaList = [];
 
-    async function loadSiswa() {
-        try {
-            const response = await fetch('/api/siswa', {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+    loadSiswa();
 
-            const result = await response.json();
-            const data = result.data ?? [];
-
-            siswaTable.innerHTML = '';
-            totalSiswa.textContent = data.length;
-
-            if (data.length === 0) {
-                siswaTable.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="empty">Belum ada data siswa.</td>
-                    </tr>
-                `;
-                return;
+    function loadSiswa() {
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                siswaList = response.data || [];
+                updateStats(siswaList);
+                renderSiswa(siswaList);
+            },
+            error: function () {
+                $('#dataSiswa').html(
+                    '<tr><td colspan="9" class="empty">Gagal memuat data siswa.</td></tr>'
+                );
             }
+        });
+    }
 
-            data.forEach((siswa, index) => {
-                const statusBadge = siswa.status === 'Aktif'
-                    ? `<span class="badge badge-blue">Aktif</span>`
-                    : `<span class="badge badge-red">Tidak Aktif</span>`;
+    function updateStats(data) {
+        var aktif = 0;
+        var tidakAktif = 0;
 
-                siswaTable.innerHTML += `
+        $.each(data, function (index, siswa) {
+            if (siswa.status === 'Aktif') aktif++;
+            if (siswa.status === 'Tidak Aktif') tidakAktif++;
+        });
+
+        $('#totalSiswa').text(data.length);
+        $('#totalAktif').text(aktif);
+        $('#totalTidakAktif').text(tidakAktif);
+    }
+
+    function safeHtml(value) {
+        if (value === null || value === undefined || value === '') {
+            return '-';
+        }
+
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function renderSiswa(data) {
+        var rows = '';
+
+        if (data.length === 0) {
+            rows = '<tr><td colspan="9" class="empty">Belum ada data siswa.</td></tr>';
+        } else {
+            $.each(data, function (index, siswa) {
+                var statusBadge = siswa.status === 'Aktif'
+                    ? '<span class="badge badge-blue">Aktif</span>'
+                    : '<span class="badge badge-red">Tidak Aktif</span>';
+
+                rows += `
                     <tr>
                         <td>${index + 1}</td>
-                        <td>${siswa.nis ?? '-'}</td>
-                        <td><strong>${siswa.nama ?? '-'}</strong></td>
-                        <td>${siswa.email ?? '-'}</td>
-                        <td>${siswa.kelas ?? '-'}</td>
-                        <td>${siswa.jenis_kelamin ?? '-'}</td>
+                        <td>${safeHtml(siswa.nis)}</td>
+                        <td><strong>${safeHtml(siswa.nama)}</strong></td>
+                        <td>${safeHtml(siswa.email)}</td>
+                        <td>${safeHtml(siswa.kelas)}</td>
+                        <td>${safeHtml(siswa.jenis_kelamin)}</td>
+                        <td>${safeHtml(siswa.no_hp)}</td>
                         <td>${statusBadge}</td>
                         <td>
                             <div class="action-group">
@@ -121,7 +151,7 @@
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
 
-                                <button type="button" onclick="deleteSiswa(${siswa.id})" class="btn btn-delete">
+                                <button class="btn btn-delete btnHapusSiswa" data-id="${siswa.id}">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
@@ -129,39 +159,50 @@
                     </tr>
                 `;
             });
-        } catch (error) {
-            siswaTable.innerHTML = `
-                <tr>
-                    <td colspan="8" class="empty">Gagal memuat data siswa.</td>
-                </tr>
-            `;
         }
+
+        $('#dataSiswa').html(rows);
     }
 
-    async function deleteSiswa(id) {
-        const konfirmasi = confirm('Yakin ingin menghapus data siswa ini?');
+    $(document).on('click', '.btnHapusSiswa', function () {
+        var id = $(this).data('id');
 
-        if (!konfirmasi) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/siswa/${id}`, {
-                method: 'DELETE',
+        if (confirm('Yakin ingin menghapus data siswa ini?')) {
+            $.ajax({
+                url: apiUrl + '/' + id,
+                type: 'DELETE',
                 headers: {
                     'Accept': 'application/json'
+                },
+                success: function (response) {
+                    alert(response.message || 'Data siswa berhasil dihapus.');
+                    loadSiswa();
+                },
+                error: function () {
+                    alert('Gagal menghapus data siswa.');
                 }
             });
-
-            const result = await response.json();
-
-            alert(result.message);
-            loadSiswa();
-        } catch (error) {
-            alert('Gagal menghapus data siswa.');
         }
-    }
+    });
 
-    loadSiswa();
+    $('#searchSiswa').on('keyup', function () {
+        var keyword = $(this).val().toLowerCase();
+
+        var filtered = siswaList.filter(function (siswa) {
+            var text =
+                String(siswa.nis || '') + ' ' +
+                String(siswa.nama || '') + ' ' +
+                String(siswa.email || '') + ' ' +
+                String(siswa.kelas || '') + ' ' +
+                String(siswa.jenis_kelamin || '') + ' ' +
+                String(siswa.no_hp || '') + ' ' +
+                String(siswa.status || '');
+
+            return text.toLowerCase().indexOf(keyword) !== -1;
+        });
+
+        renderSiswa(filtered);
+    });
+});
 </script>
 @endsection
