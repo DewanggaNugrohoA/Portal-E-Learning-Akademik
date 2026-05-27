@@ -10,7 +10,7 @@ class SiswaController extends Controller
 {
     public function index()
     {
-        $siswas = Siswa::latest()->get();
+        $siswas = Siswa::orderBy('id', 'asc')->get();
 
         return response()->json([
             'status' => 'success',
