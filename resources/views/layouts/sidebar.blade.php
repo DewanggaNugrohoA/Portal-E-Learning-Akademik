@@ -11,43 +11,43 @@
     </div>
 
     <div class="sidebar-section">
-        <p class="sidebar-title">Menu Utama</p>
+        <p class="sidebar-title">MENU UTAMA</p>
 
         <div class="sidebar-menu">
-            <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">
+            <a href="#" class="menu-link active" data-url="/" data-module="dashboard">
                 <i class="fa-solid fa-house"></i>
-                Dashboard
+                <span>Dashboard</span>
             </a>
 
-            <a href="{{ url('/materi') }}" class="{{ request()->is('materi*') ? 'active' : '' }}">
+            <a href="#" class="menu-link" data-url="/materi" data-module="materi">
                 <i class="fa-solid fa-book"></i>
-                Materi
+                <span>Materi</span>
             </a>
         </div>
     </div>
 
     <div class="sidebar-section">
-        <p class="sidebar-title">Modul Anggota</p>
+        <p class="sidebar-title">MODUL ANGGOTA</p>
 
         <div class="sidebar-menu">
-            <a href="{{ url('/siswa') }}" class="{{ request()->is('siswa*') ? 'active' : '' }}">
+            <a href="#" class="menu-link" data-url="/siswa" data-module="siswa">
                 <i class="fa-solid fa-user-graduate"></i>
-                Siswa
+                <span>Siswa</span>
             </a>
 
-            <a href="{{ url('/guru') }}" class="{{ request()->is('guru*') ? 'active' : '' }}">
+            <a href="#" class="menu-link" data-url="/guru" data-module="guru">
                 <i class="fa-solid fa-chalkboard-user"></i>
-                Guru
+                <span>Guru</span>
             </a>
 
-            <a href="{{ url('/mata-pelajaran') }}" class="{{ request()->is('mata-pelajaran*') ? 'active' : '' }}">
+            <a href="#" class="menu-link" data-url="/mata-pelajaran" data-module="mata-pelajaran">
                 <i class="fa-solid fa-book-open"></i>
-                Mata Pelajaran
+                <span>Mata Pelajaran</span>
             </a>
 
-            <a href="{{ url('/nilai') }}" class="{{ request()->is('nilai*') ? 'active' : '' }}">
+            <a href="#" class="menu-link" data-url="/nilai" data-module="nilai">
                 <i class="fa-solid fa-chart-line"></i>
-                Nilai
+                <span>Nilai</span>
             </a>
         </div>
     </div>

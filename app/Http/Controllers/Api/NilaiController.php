@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
+use App\Http\Controllers\Controller;
 
 use App\Models\Nilai;
 use App\Models\Guru;
@@ -8,142 +9,111 @@ use Illuminate\Http\Request;
 
 class NilaiController extends Controller
 {
-    public function pageIndex()
-    {
-        return view("nilai.index");
-    }
-
-    public function pageCreate()
-    {
-        return view("nilai.create");
-    }
-
-    public function pageEdit($id)
-    {
-        return view("nilai.edit", compact("id"));
-    }
-
-    public function pageShow($id)
-    {
-        return view("nilai.show", compact("id"));
-    }
-
     public function index()
     {
-        $nilais = Nilai::with("guru")->latest()->get();
+        $nilais = Nilai::with('guru')->latest()->get();
 
         return response()->json([
-            "status" => "success",
-            "message" => "Data Nilai Berhasil Ditampilkan",
-            "data" => $nilais
+            'status' => 'success',
+            'message' => 'Data nilai berhasil diambil',
+            'data' => $nilais
         ], 200);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            "guru_id" => "required|exists:gurus,id",
-            "kkm" => "required|integer|min:0|max:100",
-            "deskripsi_a" => "required|string",
-            "deskripsi_b" => "required|string",
-            "deskripsi_c" => "required|string",
-            "deskripsi_d" => "required|string",
+        $validated = $request->validate([
+            'guru_id' => 'required|exists:gurus,id',
+            'kkm' => 'required|integer|min:0|max:100',
+            'deskripsi_a' => 'required|string',
+            'deskripsi_b' => 'required|string',
+            'deskripsi_c' => 'required|string',
+            'deskripsi_d' => 'required|string',
         ]);
 
-        $nilai = Nilai::create([
-            "guru_id" => $request->guru_id,
-            "kkm" => $request->kkm,
-            "deskripsi_a" => $request->deskripsi_a,
-            "deskripsi_b" => $request->deskripsi_b,
-            "deskripsi_c" => $request->deskripsi_c,
-            "deskripsi_d" => $request->deskripsi_d,
-        ]);
+        $nilai = Nilai::create($validated);
 
         return response()->json([
-            "status" => "success",
-            "message" => "Data Nilai Berhasil Ditambahkan",
-            "data" => $nilai
+            'status' => 'success',
+            'message' => 'Data nilai berhasil ditambahkan',
+            'data' => $nilai
         ], 201);
     }
 
-    public function show($id)
+    public function show(string $id)
     {
-        $nilai = Nilai::with("guru")->find($id);
+        $nilai = Nilai::with('guru')->find($id);
 
         if (!$nilai) {
             return response()->json([
-                "status" => "error",
-                "message" => "Data Nilai Tidak Ditemukan"
+                'status' => 'error',
+                'message' => 'Data nilai tidak ditemukan'
             ], 404);
         }
 
         return response()->json([
-            "status" => "success",
-            "message" => "Data Nilai Berhasil Ditampilkan",
-            "data" => $nilai
+            'status' => 'success',
+            'message' => 'Detail nilai berhasil diambil',
+            'data' => $nilai
         ], 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
         $nilai = Nilai::find($id);
 
         if (!$nilai) {
             return response()->json([
-                "status" => "error",
-                "message" => "Data Nilai Tidak Ditemukan"
+                'status' => 'error',
+                'message' => 'Data nilai tidak ditemukan'
             ], 404);
         }
-        $request->validate([
-            "guru_id" => "required|exists:gurus,id",
-            "kkm" => "required|integer|min:0|max:100",
-            "deskripsi_a" => "required|string",
-            "deskripsi_b" => "required|string",
-            "deskripsi_c" => "required|string",
-            "deskripsi_d" => "required|string",
+
+        $validated = $request->validate([
+            'guru_id' => 'required|exists:gurus,id',
+            'kkm' => 'required|integer|min:0|max:100',
+            'deskripsi_a' => 'required|string',
+            'deskripsi_b' => 'required|string',
+            'deskripsi_c' => 'required|string',
+            'deskripsi_d' => 'required|string',
         ]);
 
-        $nilai->update([
-            "guru_id" => $request->guru_id,
-            "kkm" => $request->kkm,
-            "deskripsi_a" => $request->deskripsi_a,
-            "deskripsi_b" => $request->deskripsi_b,
-            "deskripsi_c" => $request->deskripsi_c,
-            "deskripsi_d" => $request->deskripsi_d,
-        ]);
+        $nilai->update($validated);
 
         return response()->json([
-            "status" => "success",
-            "message" => "Data Nilai Berhasil Diperbarui",
-            "data" => $nilai
+            'status' => 'success',
+            'message' => 'Data nilai berhasil diperbarui',
+            'data' => $nilai
         ], 200);
     }
-    public function destroy($id)
+
+    public function destroy(string $id)
     {
         $nilai = Nilai::find($id);
 
         if (!$nilai) {
             return response()->json([
-                "status" => "error",
-                "message" => "Data Nilai Tidak Ditemukan",
+                'status' => 'error',
+                'message' => 'Data nilai tidak ditemukan'
             ], 404);
         }
 
         $nilai->delete();
-        
+
         return response()->json([
-            "status" => "success",
-            "message" => "Data Nilai Berhasil Dihapus",
+            'status' => 'success',
+            'message' => 'Data nilai berhasil dihapus'
         ], 200);
     }
 
     public function guru()
     {
-        $gurus = Guru::orderBy("nama")->get();
+        $gurus = Guru::orderBy('nama')->get();
 
         return response()->json([
-            "status" => "success",
-            "data" => $gurus,
+            'status' => 'success',
+            'message' => 'Data guru berhasil diambil',
+            'data' => $gurus
         ], 200);
     }
 }

@@ -1,8 +1,3 @@
-@extends('layouts.app')
-
-@section('title', 'Data Materi')
-
-@section('content')
 <div class="page">
     <div class="container">
         <div class="header">
@@ -66,9 +61,7 @@
         </div>
     </div>
 </div>
-@endsection
 
-@section('scripts')
 <script>
     const materiTable = document.getElementById('materiTable');
     const totalMateri = document.getElementById('totalMateri');
@@ -109,7 +102,7 @@
                     ? `<a href="/assets/uploads/materi/${materi.file_materi}" target="_blank" class="btn btn-detail">
                             <i class="fa-solid fa-file"></i>
                             Lihat File
-                       </a>`
+                            </a>`
                     : `<span class="badge badge-red">Tidak ada file</span>`;
 
                 materiTable.innerHTML += `
@@ -188,4 +181,3 @@
 
     loadMateri();
 </script>
-@endsection
