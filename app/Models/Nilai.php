@@ -6,19 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Nilai extends Model
 {
-    protected $table = "nilais";
+    protected $table = 'nilais';
 
     protected $fillable = [
-        "guru_id",
-        "kkm",
-        "deskripsi_a",
-        "deskripsi_b",
-        "deskripsi_c",
-        "deskripsi_d",
+        'siswa_id',
+        'mata_pelajaran_id',
+        'nilai',
+        'kkm',
+        'predikat',
+        'keterangan',
     ];
 
-    public function guru()
+    public function siswa()
     {
-        return $this->belongsTo(Guru::class, "guru_id");
+        return $this->belongsTo(Siswa::class, 'siswa_id');
+    }
+
+    public function mataPelajaran()
+    {
+        return $this->belongsTo(MataPelajaran::class, 'mata_pelajaran_id');
     }
 }

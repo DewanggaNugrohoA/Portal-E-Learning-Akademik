@@ -1,17 +1,18 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\Controller;
 use App\Models\Nilai;
-use App\Models\Guru;
+use App\Models\Siswa;
+use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
 
 class NilaiController extends Controller
 {
     public function index()
     {
-        $nilais = Nilai::with('guru')->latest()->get();
+        $nilais = Nilai::with(['siswa', 'mataPelajaran'])->latest()->get();
 
         return response()->json([
             'status' => 'success',
@@ -23,13 +24,14 @@ class NilaiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'guru_id' => 'required|exists:gurus,id',
+            'siswa_id' => 'required|exists:siswas,id',
+            'mata_pelajaran_id' => 'required|exists:mata_pelajarans,id',
+            'nilai' => 'required|integer|min:0|max:100',
             'kkm' => 'required|integer|min:0|max:100',
-            'deskripsi_a' => 'required|string',
-            'deskripsi_b' => 'required|string',
-            'deskripsi_c' => 'required|string',
-            'deskripsi_d' => 'required|string',
         ]);
+
+        $validated['predikat'] = $this->hitungPredikat($validated['nilai']);
+        $validated['keterangan'] = $this->hitungKeterangan($validated['nilai'], $validated['kkm']);
 
         $nilai = Nilai::create($validated);
 
@@ -42,7 +44,7 @@ class NilaiController extends Controller
 
     public function show(string $id)
     {
-        $nilai = Nilai::with('guru')->find($id);
+        $nilai = Nilai::with(['siswa', 'mataPelajaran'])->find($id);
 
         if (!$nilai) {
             return response()->json([
@@ -70,13 +72,14 @@ class NilaiController extends Controller
         }
 
         $validated = $request->validate([
-            'guru_id' => 'required|exists:gurus,id',
+            'siswa_id' => 'required|exists:siswas,id',
+            'mata_pelajaran_id' => 'required|exists:mata_pelajarans,id',
+            'nilai' => 'required|integer|min:0|max:100',
             'kkm' => 'required|integer|min:0|max:100',
-            'deskripsi_a' => 'required|string',
-            'deskripsi_b' => 'required|string',
-            'deskripsi_c' => 'required|string',
-            'deskripsi_d' => 'required|string',
         ]);
+
+        $validated['predikat'] = $this->hitungPredikat($validated['nilai']);
+        $validated['keterangan'] = $this->hitungKeterangan($validated['nilai'], $validated['kkm']);
 
         $nilai->update($validated);
 
@@ -106,14 +109,43 @@ class NilaiController extends Controller
         ], 200);
     }
 
-    public function guru()
+    public function siswa()
     {
-        $gurus = Guru::orderBy('nama')->get();
+        $siswas = Siswa::orderBy('nama')->get();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data guru berhasil diambil',
-            'data' => $gurus
+            'message' => 'Data siswa berhasil diambil',
+            'data' => $siswas
         ], 200);
+    }
+
+    public function mataPelajaran()
+    {
+        $mataPelajarans = MataPelajaran::orderBy('nama_mata_pelajaran')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data mata pelajaran berhasil diambil',
+            'data' => $mataPelajarans
+        ], 200);
+    }
+
+    private function hitungPredikat($nilai)
+    {
+        if ($nilai >= 90) {
+            return 'A';
+        } elseif ($nilai >= 80) {
+            return 'B';
+        } elseif ($nilai >= 70) {
+            return 'C';
+        }
+
+        return 'D';
+    }
+
+    private function hitungKeterangan($nilai, $kkm)
+    {
+        return $nilai >= $kkm ? 'Tuntas' : 'Tidak Tuntas';
     }
 }

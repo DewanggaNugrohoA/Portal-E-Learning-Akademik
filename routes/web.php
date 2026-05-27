@@ -63,3 +63,13 @@ Route::get('/mata-pelajaran/{id}/edit', function ($id) {
 Route::get('/mata-pelajaran/{id}', function ($id) {
     return view('mata-pelajaran.show', compact('id'));
 })->name('mata-pelajaran.show');
+
+/*
+|--------------------------------------------------------------------------
+| Modul Nilai - Karina
+| Halaman Blade, proses CRUD lewat API /api/nilai
+|--------------------------------------------------------------------------
+*/
+Route::get('/nilai', function () {
+    return view('nilai.index');
+})->name('nilai.index');
