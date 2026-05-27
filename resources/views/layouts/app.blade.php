@@ -15,10 +15,8 @@
 
         :root {
             --primary: #1e3a8a;
-            --primary-dark: #172554;
             --primary-soft: #eff6ff;
             --bg: #f3f6fc;
-            --card: #ffffff;
             --text: #111827;
             --muted: #64748b;
             --border: #e5eaf3;
@@ -50,69 +48,6 @@
             padding: 24px 18px;
             overflow-y: auto;
             z-index: 50;
-        }
-
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 30px;
-            padding: 0 8px;
-        }
-
-        .brand-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 16px;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .sidebar-brand h2 {
-            font-size: 17px;
-            margin: 0;
-            line-height: 1.3;
-        }
-
-        .sidebar-brand span {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .sidebar-section { margin-bottom: 24px; }
-
-        .sidebar-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #94a3b8;
-            letter-spacing: 0.08em;
-            margin: 0 8px 10px;
-        }
-
-        .sidebar-menu {
-            display: grid;
-            gap: 7px;
-        }
-
-        .sidebar-menu a {
-            color: #cbd5e1;
-            padding: 12px 14px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            transition: 0.2s;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background: var(--primary);
-            color: white;
         }
 
         .main-content {
@@ -154,15 +89,76 @@
             font-weight: 600;
         }
 
-        .page { padding: 32px; }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding: 0 8px;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .sidebar-brand h2 {
+            font-size: 17px;
+            margin: 0;
+        }
+
+        .sidebar-brand span {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 0.08em;
+            margin: 0 8px 10px;
+        }
+
+        .sidebar-menu {
+            display: grid;
+            gap: 7px;
+        }
+
+        .sidebar-menu a {
+            color: #cbd5e1;
+            padding: 12px 14px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            transition: 0.2s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .page {
+            padding: 32px;
+        }
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .container-small {
-            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -198,8 +194,6 @@
 
         .panel,
         .card,
-        .profile-card,
-        .section,
         .stat-card,
         .dashboard-card {
             background: white;
@@ -231,30 +225,6 @@
             flex-wrap: wrap;
         }
 
-        .toolbar h2 {
-            font-size: 24px;
-            margin: 0;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
-        }
-
-        .form-group.full {
-            grid-column: 1 / -1;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin: 12px 0 7px;
-            color: #334155;
-        }
-
         input,
         select,
         textarea {
@@ -268,17 +238,11 @@
             background: #f8fbff;
         }
 
-        textarea {
-            min-height: 105px;
-            resize: vertical;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.10);
+        label {
+            display: block;
+            font-weight: 600;
+            margin: 12px 0 7px;
+            color: #334155;
         }
 
         .btn,
@@ -327,15 +291,6 @@
             color: var(--red-text);
         }
 
-        .actions,
-        .form-actions {
-            margin-top: 18px;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-        }
-
         .action-group {
             display: flex;
             gap: 10px;
@@ -364,7 +319,6 @@
             text-align: left;
             font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
         }
 
         td {
@@ -399,116 +353,6 @@
             color: var(--red-text);
         }
 
-        .info-box {
-            background: var(--primary-soft);
-            color: var(--primary);
-            padding: 12px 14px;
-            border-radius: 12px;
-            margin-bottom: 18px;
-            font-weight: 600;
-        }
-
-        .profile-top {
-            display: flex;
-            gap: 18px;
-            align-items: center;
-        }
-
-        .detail-avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 18px;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-        }
-
-        .profile-info h2 {
-            margin: 0;
-            color: #111827;
-            font-size: 24px;
-        }
-
-        .profile-info p {
-            margin: 6px 0 0;
-            color: var(--muted);
-        }
-
-        .badge-row {
-            margin-top: 10px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .content-grid {
-            margin-top: 22px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 18px;
-        }
-
-        .section h3 { margin-top: 0; }
-
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-        }
-
-        .data-item {
-            background: #f8fbff;
-            border: 1px solid #e5eaf3;
-            border-radius: 12px;
-            padding: 12px;
-        }
-
-        .data-item.full {
-            grid-column: 1 / -1;
-        }
-
-        .label {
-            font-size: 12px;
-            color: var(--muted);
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .value {
-            color: #111827;
-            line-height: 1.6;
-        }
-
-        .dashboard-card {
-            text-decoration: none;
-            color: var(--text);
-        }
-
-        .dashboard-card i {
-            width: 48px;
-            height: 48px;
-            background: var(--primary-soft);
-            color: var(--primary);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            margin-bottom: 16px;
-        }
-
-        .dashboard-card h3 {
-            margin: 0 0 8px;
-        }
-
-        .dashboard-card p {
-            margin: 0;
-            color: var(--muted);
-        }
-
         @media (max-width: 1000px) {
             .admin-wrapper {
                 display: block;
@@ -534,28 +378,14 @@
                 padding: 20px 14px;
             }
 
-            .form-grid,
             .stat-grid,
-            .dashboard-grid,
-            .data-grid {
+            .dashboard-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .header {
-                padding: 22px;
-            }
-
-            .header h1 {
-                font-size: 25px;
-            }
-
-            .profile-top {
-                align-items: flex-start;
-                flex-direction: column;
             }
         }
     </style>
 </head>
+
 <body>
 
 <div class="admin-wrapper">
@@ -573,48 +403,21 @@
 @yield('scripts')
 
 <script>
-$(document).ready(function () {
-    $(document).on('click', '.menu-link', function (e) {
-        e.preventDefault();
+document.addEventListener('DOMContentLoaded', function () {
+    const menuLinks = document.querySelectorAll('.menu-link');
 
-        var url = $(this).data('url');
-        var module = $(this).data('module');
+    menuLinks.forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
 
-        $('.menu-link').removeClass('active');
-        $('.menu-link[data-module="' + module + '"]').addClass('active');
+            const url = this.getAttribute('href');
 
-        $.ajax({
-            url: url,
-            type: 'GET',
-            success: function (html) {
-                var content = $(html).find('#main-container').html();
-
-                if (content) {
-                    $('#main-container').html(content);
-                } else {
-                    $('#main-container').html(html);
-                }
-
-                if (module === 'nilai' && typeof initNilai === 'function') initNilai();
-                if (module === 'siswa' && typeof initSiswa === 'function') initSiswa();
-                if (module === 'guru' && typeof initGuru === 'function') initGuru();
-                if (module === 'materi' && typeof initMateri === 'function') initMateri();
-                if (module === 'mata-pelajaran' && typeof initMataPelajaran === 'function') initMataPelajaran();
-            },
-            error: function () {
-                alert('Halaman gagal dimuat.');
+            if (url) {
+                window.location.href = url;
             }
         });
     });
 });
-</script>
-
-<script>
-window.initNilai = window.initNilai || function(){};
-window.initSiswa = window.initSiswa || function(){};
-window.initGuru = window.initGuru || function(){};
-window.initMateri = window.initMateri || function(){};
-window.initMataPelajaran = window.initMataPelajaran || function(){};
 </script>
 
 </body>
