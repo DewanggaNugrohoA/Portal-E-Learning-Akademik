@@ -16,7 +16,8 @@
             </div>
 
             <div class="action-group" style="margin-top: 20px;">
-                <a href="/nilai" class="btn btn-detail">
+                <a href="/nilai" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i>
                     Kembali
                 </a>
 
