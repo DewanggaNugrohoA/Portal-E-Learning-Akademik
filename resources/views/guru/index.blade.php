@@ -1,84 +1,75 @@
+@extends('layouts.app')
+
+@section('title', 'Data Guru')
+
+@section('content')
 <div class="page">
     <div class="container">
         <div class="header">
-            <h1>Manajemen Data Guru</h1>
-            <p>Kelola data guru menggunakan jQuery AJAX.</p>
+            <h1>Data Guru</h1>
+            <p>Kelola data guru menggunakan REST API Laravel.</p>
+        </div>
+
+        <div class="stat-grid">
+
+            <div class="stat-card">
+                <span>Total Guru</span>
+                <h2 id="totalGuru">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Modul</span>
+                <h2>Guru</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Penanggung Jawab</span>
+                <h2>Adel</h2>
+            </div>
+
         </div>
 
         <div class="panel">
-            <div id="guruTableSection">
-                <div class="toolbar">
-                    <input type="text" id="searchGuru" placeholder="Cari nama, NIP, email, no HP, alamat, atau mapel...">
+            <div class="toolbar">
+                <input type="text" id="searchGuru" placeholder="Cari NIP, nama, email, no HP, atau mapel...">
 
-                    <button type="button" class="btn btn-primary" id="btnTambahGuru">
-                        <i class="fa-solid fa-plus"></i>
-                        Tambah Guru
-                    </button>
-                </div>
-
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama</th>
-                                <th>NIP</th>
-                                <th>Email</th>
-                                <th>No HP</th>
-                                <th>Alamat</th>
-                                <th>Mapel</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataGuru">
-                            <tr>
-                                <td colspan="8" class="empty">Memuat data guru...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <a href="/guru/create" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i>
+                    Tambah Guru
+                </a>
             </div>
 
-            <div id="guruFormSection" style="display:none;">
-                <h3 id="guruFormTitle">Tambah Guru</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NO</th>
+                            <th>NIP</th>
+                            <th>NAMA</th>
+                            <th>EMAIL</th>
+                            <th>NO HP</th>
+                            <th>MAPEL</th>
+                            <th>AKSI</th>
+                        </tr>
+                    </thead>
 
-                <form id="formGuru">
-                    <input type="hidden" id="guru_id">
-
-                    <label>Nama</label>
-                    <input type="text" id="nama_guru" required>
-
-                    <label>NIP</label>
-                    <input type="text" id="nip" required>
-
-                    <label>Email</label>
-                    <input type="email" id="email_guru" required>
-
-                    <label>No HP</label>
-                    <input type="text" id="no_hp_guru">
-
-                    <label>Alamat</label>
-                    <textarea id="alamat_guru"></textarea>
-
-                    <label>Mapel</label>
-                    <input type="text" id="mapel" required>
-
-                    <br><br>
-
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <button type="button" class="btn btn-secondary" id="btnBatalGuru">Batal</button>
-                </form>
+                    <tbody id="dataGuru">
+                        <tr>
+                            <td colspan="7" class="empty">Memuat data guru...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <div id="guruDetailSection" style="display:none;"></div>
         </div>
     </div>
 </div>
+@endsection
 
+@section('scripts')
 <script>
 $(document).ready(function () {
-    var apiUrl = '/api/guru';
-    var guruList = [];
+    let apiUrl = '/api/guru';
+    let guruList = [];
 
     loadGuru();
 
@@ -86,51 +77,51 @@ $(document).ready(function () {
         $.ajax({
             url: apiUrl,
             type: 'GET',
-            headers: { 'Accept': 'application/json' },
+            headers: { 
+                'Accept': 'application/json' 
+            },
             success: function (response) {
                 guruList = response.data || [];
+                $('#totalGuru').text(guruList.length);
                 renderGuru(guruList);
             },
             error: function () {
-                $('#dataGuru').html('<tr><td colspan="8" class="empty">Gagal memuat data guru.</td></tr>');
+                $('#dataGuru').html(
+                    '<tr><td colspan="7" class="empty">Gagal memuat data guru.</td></tr>'
+                );
             }
         });
     }
 
-    function safeHtml(value) {
-        if (value === null || value === undefined || value === '') return '-';
-        return String(value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
+    function safe(value) {
+        return value ? value : '-';
     }
 
     function renderGuru(data) {
-        var rows = '';
+        let rows = '';
 
         if (data.length === 0) {
-            rows = '<tr><td colspan="8" class="empty">Belum ada data guru.</td></tr>';
+            rows = '<tr><td colspan="7" class="empty">Belum ada data guru.</td></tr>';
         } else {
-            $.each(data, function (index, guru) {
+            data.forEach(function (guru, index) {
                 rows += `
                     <tr>
                         <td>${index + 1}</td>
-                        <td>${safeHtml(guru.nama)}</td>
-                        <td>${safeHtml(guru.nip)}</td>
-                        <td>${safeHtml(guru.email)}</td>
-                        <td>${safeHtml(guru.no_hp)}</td>
-                        <td>${safeHtml(guru.alamat)}</td>
-                        <td>${safeHtml(guru.mapel)}</td>
+                        <td>${safe(guru.nip)}</td>
+                        <td>${safe(guru.nama)}</td>
+                        <td>${safe(guru.email)}</td>
+                        <td>${safe(guru.no_hp)}</td>
+                        <td>${safe(guru.mapel)}</td>
                         <td>
                             <div class="action-group">
-                                <button class="btn btn-detail btnDetailGuru" data-id="${guru.id}">
+                                <a href="/guru/${guru.id}" class="btn btn-detail">
                                     <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button class="btn btn-edit btnEditGuru" data-id="${guru.id}">
+                                </a>
+
+                                <a href="/guru/${guru.id}/edit" class="btn btn-edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
+                                </a>
+
                                 <button class="btn btn-delete btnHapusGuru" data-id="${guru.id}">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -144,139 +135,34 @@ $(document).ready(function () {
         $('#dataGuru').html(rows);
     }
 
-    function showGuruTable() {
-        $('#guruTableSection').show();
-        $('#guruFormSection').hide();
-        $('#guruDetailSection').hide();
-    }
+    $('#searchGuru').on('keyup', function () {
+        let keyword = $(this).val().toLowerCase();
 
-    function showGuruForm() {
-        $('#guruTableSection').hide();
-        $('#guruFormSection').show();
-        $('#guruDetailSection').hide();
-    }
+        let filtered = guruList.filter(function (guru) {
+            let text =
+                String(guru.nip || '') + ' ' +
+                String(guru.nama || '') + ' ' +
+                String(guru.email || '') + ' ' +
+                String(guru.no_hp || '') + ' ' +
+                String(guru.mapel || '');
 
-    function showGuruDetail() {
-        $('#guruTableSection').hide();
-        $('#guruFormSection').hide();
-        $('#guruDetailSection').show();
-    }
-
-    $('#btnTambahGuru').on('click', function () {
-        $('#guruFormTitle').text('Tambah Guru');
-        $('#guru_id').val('');
-        $('#formGuru')[0].reset();
-        showGuruForm();
-    });
-
-    $('#btnBatalGuru').on('click', function () {
-        $('#formGuru')[0].reset();
-        showGuruTable();
-    });
-
-    $('#formGuru').on('submit', function (e) {
-        e.preventDefault();
-
-        var id = $('#guru_id').val();
-        var method = id ? 'PUT' : 'POST';
-        var url = id ? apiUrl + '/' + id : apiUrl;
-
-        $.ajax({
-            url: url,
-            type: method,
-            headers: { 'Accept': 'application/json' },
-            data: {
-                nama: $('#nama_guru').val(),
-                nip: $('#nip').val(),
-                email: $('#email_guru').val(),
-                no_hp: $('#no_hp_guru').val(),
-                alamat: $('#alamat_guru').val(),
-                mapel: $('#mapel').val()
-            },
-            success: function (response) {
-                alert(response.message || 'Data guru berhasil disimpan.');
-                $('#formGuru')[0].reset();
-                showGuruTable();
-                loadGuru();
-            },
-            error: function () {
-                alert('Gagal menyimpan data guru.');
-            }
+            return text.toLowerCase().includes(keyword);
         });
-    });
 
-    $(document).on('click', '.btnEditGuru', function () {
-        var id = $(this).data('id');
-
-        $.ajax({
-            url: apiUrl + '/' + id,
-            type: 'GET',
-            headers: { 'Accept': 'application/json' },
-            success: function (response) {
-                var guru = response.data;
-
-                $('#guruFormTitle').text('Edit Guru');
-                $('#guru_id').val(guru.id);
-                $('#nama_guru').val(guru.nama);
-                $('#nip').val(guru.nip);
-                $('#email_guru').val(guru.email);
-                $('#no_hp_guru').val(guru.no_hp);
-                $('#alamat_guru').val(guru.alamat);
-                $('#mapel').val(guru.mapel);
-
-                showGuruForm();
-            },
-            error: function () {
-                alert('Gagal memuat data guru.');
-            }
-        });
-    });
-
-    $(document).on('click', '.btnDetailGuru', function () {
-        var id = $(this).data('id');
-
-        $.ajax({
-            url: apiUrl + '/' + id,
-            type: 'GET',
-            headers: { 'Accept': 'application/json' },
-            success: function (response) {
-                var guru = response.data;
-
-                $('#guruDetailSection').html(`
-                    <h3>Detail Guru</h3>
-                    <p><b>Nama:</b> ${safeHtml(guru.nama)}</p>
-                    <p><b>NIP:</b> ${safeHtml(guru.nip)}</p>
-                    <p><b>Email:</b> ${safeHtml(guru.email)}</p>
-                    <p><b>No HP:</b> ${safeHtml(guru.no_hp)}</p>
-                    <p><b>Alamat:</b> ${safeHtml(guru.alamat)}</p>
-                    <p><b>Mapel:</b> ${safeHtml(guru.mapel)}</p>
-                    <br>
-                    <button class="btn btn-primary btnEditGuru" data-id="${guru.id}">Edit</button>
-                    <button class="btn btn-secondary" id="btnKembaliGuru">Kembali</button>
-                `);
-
-                showGuruDetail();
-            },
-            error: function () {
-                alert('Gagal memuat detail guru.');
-            }
-        });
-    });
-
-    $(document).on('click', '#btnKembaliGuru', function () {
-        showGuruTable();
+        renderGuru(filtered);
     });
 
     $(document).on('click', '.btnHapusGuru', function () {
-        var id = $(this).data('id');
+        let id = $(this).data('id');
 
-        if (confirm('Yakin ingin menghapus data guru ini?')) {
+        if (confirm('Yakin hapus data guru?')) {
             $.ajax({
                 url: apiUrl + '/' + id,
                 type: 'DELETE',
-                headers: { 'Accept': 'application/json' },
-                success: function (response) {
-                    alert(response.message || 'Data guru berhasil dihapus.');
+                headers: { 
+                    'Accept': 'application/json' 
+                },
+                success: function () {
                     loadGuru();
                 },
                 error: function () {
@@ -285,23 +171,6 @@ $(document).ready(function () {
             });
         }
     });
-
-    $('#searchGuru').on('keyup', function () {
-        var keyword = $(this).val().toLowerCase();
-
-        var filtered = guruList.filter(function (guru) {
-            var text =
-                String(guru.nama || '') + ' ' +
-                String(guru.nip || '') + ' ' +
-                String(guru.email || '') + ' ' +
-                String(guru.no_hp || '') + ' ' +
-                String(guru.alamat || '') + ' ' +
-                String(guru.mapel || '');
-
-            return text.toLowerCase().indexOf(keyword) !== -1;
-        });
-
-        renderGuru(filtered);
-    });
 });
 </script>
+@endsection

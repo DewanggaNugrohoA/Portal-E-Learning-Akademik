@@ -1,50 +1,71 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Tambah Guru</title>
+@extends('layouts.app')
 
-</head>
-<body>
+@section('title', 'Tambah Guru')
 
-<h1>Tambah Guru</h1>
+@section('content')
 
-<form action="{{ route('guru.store') }}" method="POST">
-    @csrf
+<div class="page">
+    <div class="container">
 
-    <label>Nama</label>
-    <br>
-    <input type="text" name="nama">
-    <br><br>
+        <div class="header">
+            <h1>Tambah Data Guru</h1>
+            <p>Tambahkan data guru baru ke sistem akademik.</p>
+        </div>
 
-    <label>NIP</label>
-    <br>
-    <input type="text" name="nip">
-    <br><br>
+        <div class="panel">
 
-    <label>Email</label>
-    <br>
-    <input type="email" name="email">
-    <br><br>
+            <form action="{{ route('guru.store') }}" method="POST">
+                @csrf
 
-    <label>No HP</label>
-    <br>
-    <input type="text" name="no_hp">
-    <br><br>
+                <div class="form-grid">
 
-    <label>Alamat</label>
-    <br>
-    <textarea name="alamat"></textarea>
-    <br><br>
+                    <div class="form-group">
+                        <label>Nama Guru</label>
+                        <input type="text" name="nama" placeholder="Masukkan nama guru" required>
+                    </div>
 
-    <label>Mata Pelajaran</label>
-    <br>
-    <input type="text" name="mata_pelajaran">
-    <br><br>
+                    <div class="form-group">
+                        <label>NIP</label>
+                        <input type="text" name="nip" placeholder="Masukkan NIP" required>
+                    </div>
 
-    <button type="submiit">
-        Simpan
-    </button>
-</form>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" placeholder="Masukkan email" required>
+                    </div>
 
-</body>
-</html>
+                    <div class="form-group">
+                        <label>No HP</label>
+                        <input type="text" name="no_hp" placeholder="Masukkan nomor HP">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Alamat</label>
+                        <textarea name="alamat" rows="4" placeholder="Masukkan alamat guru"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mata Pelajaran</label>
+                        <input type="text" name="mata_pelajaran" placeholder="Contoh: Matematika">
+                    </div>
+
+                </div>
+
+                <div class="button-group">
+                    <a href="/guru" class="btn btn-secondary">
+                        Kembali
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        Simpan Data
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+@endsection

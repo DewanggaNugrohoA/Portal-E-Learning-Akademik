@@ -17,10 +17,8 @@
 
         :root {
             --primary: #1e3a8a;
-            --primary-dark: #172554;
             --primary-soft: #eff6ff;
             --bg: #f3f6fc;
-            --card: #ffffff;
             --text: #111827;
             --muted: #64748b;
             --border: #e5eaf3;
@@ -56,6 +54,45 @@
             z-index: 50;
         }
 
+        .main-content {
+            flex: 1;
+            margin-left: 270px;
+            min-width: 0;
+        }
+
+        .navbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .navbar-left h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .navbar-left p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .admin-badge {
+            background: var(--primary-soft);
+            color: var(--primary);
+            padding: 9px 13px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
         .sidebar-brand {
             display: flex;
             align-items: center;
@@ -78,7 +115,6 @@
         .sidebar-brand h2 {
             font-size: 17px;
             margin: 0;
-            line-height: 1.3;
         }
 
         .sidebar-brand span {
@@ -86,6 +122,8 @@
             color: #94a3b8;
         }
 
+        .sidebar-section {
+            margin-bottom: 24px;
         .sidebar-section { 
             margin-bottom: 24px; 
         }
@@ -121,10 +159,8 @@
             color: white;
         }
 
-        .main-content {
-            flex: 1;
-            margin-left: 270px;
-            min-width: 0;
+        .page {
+            padding: 32px;
         }
 
         .page { 
@@ -133,11 +169,6 @@
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .container-small {
-            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -173,8 +204,6 @@
 
         .panel,
         .card,
-        .profile-card,
-        .section,
         .stat-card,
         .dashboard-card {
             background: white;
@@ -242,17 +271,11 @@
             background: #f8fbff;
         }
 
-        textarea {
-            min-height: 105px;
-            resize: vertical;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.10);
+        label {
+            display: block;
+            font-weight: 600;
+            margin: 12px 0 7px;
+            color: #334155;
         }
 
         .btn,
@@ -302,15 +325,6 @@
             color: var(--red-text);
         }
 
-        .actions,
-        .form-actions {
-            margin-top: 18px;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-        }
-
         .action-group {
             display: flex;
             gap: 10px;
@@ -339,7 +353,6 @@
             text-align: left;
             font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
         }
 
         td {
@@ -505,28 +518,14 @@
                 padding: 20px 14px;
             }
 
-            .form-grid,
             .stat-grid,
-            .dashboard-grid,
-            .data-grid {
+            .dashboard-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .header {
-                padding: 22px;
-            }
-
-            .header h1 {
-                font-size: 25px;
-            }
-
-            .profile-top {
-                align-items: flex-start;
-                flex-direction: column;
             }
         }
     </style>
 </head>
+
 <body>
 
 <div class="admin-wrapper">
@@ -538,6 +537,24 @@
 </div>
 
 @yield('scripts')
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const menuLinks = document.querySelectorAll('.menu-link');
+
+    menuLinks.forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const url = this.getAttribute('href');
+
+            if (url) {
+                window.location.href = url;
+            }
+        });
+    });
+});
+</script>
 
 </body>
 </html>
