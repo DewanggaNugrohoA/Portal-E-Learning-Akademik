@@ -61,7 +61,10 @@
 
                     <br>
 
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-save"></i>
+                        Simpan
+                    </button>
                     <button type="button" class="btn btn-secondary" id="btnBatal">Batal</button>
                 </form>
             </div>
@@ -70,6 +73,55 @@
         </div>
     </div>
 </div>
+
+<style>
+.swal-modern {
+    border-radius: 28px !important;
+    padding: 28px !important;
+}
+
+.swal-confirm {
+    background: #1e3a8a !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 14px 22px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-shadow: 0 10px 25px rgba(30, 58, 138, 0.25);
+}
+
+.swal-danger {
+    background: #dc2626 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 14px 22px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.25);
+}
+
+.swal-cancel {
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 14px 22px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.swal2-actions {
+    gap: 12px !important;
+}
+</style>
 
 <script>
 $(document).ready(function () {
@@ -110,7 +162,7 @@ $(document).ready(function () {
                 $('#guru_id').html(options);
             },
             error: function () {
-                alert('Gagal memuat data guru.');
+                showErrorPopup('Gagal Memuat Guru', 'Data guru gagal dimuat. Pastikan API guru aktif.');
             }
         });
     }
@@ -128,6 +180,52 @@ $(document).ready(function () {
 
     function getGuruName(nilai) {
         return nilai.guru && nilai.guru.nama ? nilai.guru.nama : '-';
+    }
+
+    function showSuccessPopup(title, message) {
+        Swal.fire({
+            title: title,
+            html: `
+                <p style="color:#64748b; margin:0; font-size:15px; line-height:1.6;">
+                    ${message}
+                </p>
+            `,
+            icon: 'success',
+            width: '480px',
+            background: '#ffffff',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'swal-modern',
+                confirmButton: 'swal-confirm'
+            },
+            confirmButtonText: `
+                <i class="fa-solid fa-check"></i>
+                Oke
+            `
+        });
+    }
+
+    function showErrorPopup(title, message) {
+        Swal.fire({
+            title: title,
+            html: `
+                <p style="color:#64748b; margin:0; font-size:15px; line-height:1.6;">
+                    ${message}
+                </p>
+            `,
+            icon: 'error',
+            width: '480px',
+            background: '#ffffff',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'swal-modern',
+                confirmButton: 'swal-danger'
+            },
+            confirmButtonText: `
+                <i class="fa-solid fa-xmark"></i>
+                Tutup
+            `
+        });
     }
 
     function renderTable(data) {
@@ -203,27 +301,97 @@ $(document).ready(function () {
         var id = $('#nilai_id').val();
         var method = id ? 'PUT' : 'POST';
         var url = id ? apiUrl + '/' + id : apiUrl;
+        var actionText = id ? 'memperbarui' : 'menyimpan';
 
-        $.ajax({
-            url: url,
-            type: method,
-            headers: { 'Accept': 'application/json' },
-            data: {
-                guru_id: $('#guru_id').val(),
-                kkm: $('#kkm').val(),
-                deskripsi_a: 'Sangat Baik',
-                deskripsi_b: 'Baik',
-                deskripsi_c: 'Cukup',
-                deskripsi_d: 'Kurang'
-            },
-            success: function (response) {
-                alert(response.message || 'Data berhasil disimpan.');
-                $('#formNilai')[0].reset();
-                showTable();
-                loadNilai();
-            },
-            error: function () {
-                alert('Gagal menyimpan data nilai.');
+        Swal.fire({
+            title: id ? 'Update Data Nilai?' : 'Simpan Data Nilai?',
+            html: `
+                <p style="color:#64748b; margin-bottom:18px; font-size:15px; line-height:1.6;">
+                    Pastikan data guru dan KKM sudah benar sebelum ${actionText} data.
+                </p>
+
+                <div style="
+                    background:#eff6ff;
+                    border:1px solid #bfdbfe;
+                    border-radius:18px;
+                    padding:16px;
+                    text-align:left;
+                ">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="
+                            width:42px;
+                            height:42px;
+                            border-radius:12px;
+                            background:#dbeafe;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            color:#1e3a8a;
+                            font-size:18px;
+                        ">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </div>
+
+                        <div>
+                            <div style="font-weight:700; color:#0f172a; margin-bottom:4px;">
+                                Data nilai akan diproses
+                            </div>
+                            <div style="color:#64748b; font-size:14px;">
+                                Predikat A-D akan otomatis tersimpan.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            width: '520px',
+            showCancelButton: true,
+            confirmButtonText: `
+                <i class="fa-solid fa-save"></i>
+                Ya, Simpan
+            `,
+            cancelButtonText: `
+                <i class="fa-solid fa-xmark"></i>
+                Batal
+            `,
+            reverseButtons: true,
+            background: '#ffffff',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'swal-modern',
+                confirmButton: 'swal-confirm',
+                cancelButton: 'swal-cancel'
+            }
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: url,
+                    type: method,
+                    headers: { 'Accept': 'application/json' },
+                    data: {
+                        guru_id: $('#guru_id').val(),
+                        kkm: $('#kkm').val(),
+                        deskripsi_a: 'Sangat Baik',
+                        deskripsi_b: 'Baik',
+                        deskripsi_c: 'Cukup',
+                        deskripsi_d: 'Kurang'
+                    },
+                    success: function (response) {
+                        $('#formNilai')[0].reset();
+                        showTable();
+                        loadNilai();
+
+                        showSuccessPopup(
+                            'Berhasil!',
+                            response.message || 'Data nilai berhasil disimpan.'
+                        );
+                    },
+                    error: function () {
+                        showErrorPopup(
+                            'Gagal!',
+                            'Data nilai gagal disimpan. Periksa kembali guru dan KKM.'
+                        );
+                    }
+                });
             }
         });
     });
@@ -254,7 +422,7 @@ $(document).ready(function () {
                 showDetail();
             },
             error: function () {
-                alert('Gagal memuat detail nilai.');
+                showErrorPopup('Gagal!', 'Detail nilai gagal dimuat.');
             }
         });
     });
@@ -281,7 +449,7 @@ $(document).ready(function () {
                 showForm();
             },
             error: function () {
-                alert('Gagal memuat data nilai.');
+                showErrorPopup('Gagal!', 'Data nilai gagal dimuat.');
             }
         });
     });
@@ -289,20 +457,95 @@ $(document).ready(function () {
     $(document).on('click', '.btnHapus', function () {
         var id = $(this).data('id');
 
-        if (confirm('Yakin ingin menghapus data nilai ini?')) {
-            $.ajax({
-                url: apiUrl + '/' + id,
-                type: 'DELETE',
-                headers: { 'Accept': 'application/json' },
-                success: function (response) {
-                    alert(response.message || 'Data nilai berhasil dihapus.');
-                    loadNilai();
-                },
-                error: function () {
-                    alert('Gagal menghapus data nilai.');
-                }
-            });
-        }
+        Swal.fire({
+            title: 'Hapus Data Nilai?',
+            html: `
+                <div style="margin-top:10px;">
+                    <p style="
+                        color:#64748b;
+                        margin-bottom:18px;
+                        font-size:15px;
+                        line-height:1.6;
+                    ">
+                        Data nilai yang dihapus tidak dapat dikembalikan.
+                        Pastikan Anda yakin ingin melanjutkan.
+                    </p>
+
+                    <div style="
+                        background:#fff1f2;
+                        border:1px solid #fecdd3;
+                        border-radius:18px;
+                        padding:16px;
+                        text-align:left;
+                    ">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="
+                                width:42px;
+                                height:42px;
+                                border-radius:12px;
+                                background:#ffe4e6;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                color:#dc2626;
+                                font-size:18px;
+                            ">
+                                <i class="fa-solid fa-trash"></i>
+                            </div>
+
+                            <div>
+                                <div style="font-weight:700; color:#0f172a; margin-bottom:4px;">
+                                    Data akan dihapus
+                                </div>
+                                <div style="color:#64748b; font-size:14px;">
+                                    Data nilai ini akan hilang permanen.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            width: '520px',
+            showCancelButton: true,
+            confirmButtonText: `
+                <i class="fa-solid fa-trash"></i>
+                Ya, Hapus
+            `,
+            cancelButtonText: `
+                <i class="fa-solid fa-xmark"></i>
+                Batal
+            `,
+            reverseButtons: true,
+            background: '#ffffff',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'swal-modern',
+                confirmButton: 'swal-danger',
+                cancelButton: 'swal-cancel'
+            }
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: apiUrl + '/' + id,
+                    type: 'DELETE',
+                    headers: { 'Accept': 'application/json' },
+                    success: function (response) {
+                        loadNilai();
+
+                        showSuccessPopup(
+                            'Berhasil Dihapus!',
+                            response.message || 'Data nilai berhasil dihapus.'
+                        );
+                    },
+                    error: function () {
+                        showErrorPopup(
+                            'Gagal!',
+                            'Data nilai gagal dihapus.'
+                        );
+                    }
+                });
+            }
+        });
     });
 
     $('#searchInput').on('keyup', function () {
