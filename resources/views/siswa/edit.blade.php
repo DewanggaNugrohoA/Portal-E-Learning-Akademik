@@ -5,45 +5,37 @@
 @section('content')
 <div class="page">
     <div class="container-small">
-
         <div class="header">
             <h1>Edit Data Siswa</h1>
-            <p>Form edit data siswa menggunakan REST API Laravel.</p>
+            <p>Data siswa akan diperbarui menggunakan API endpoint /api/siswa/{{ $id }}.</p>
         </div>
 
-        <div class="card">
-
-            <div class="info-box" id="statusBox">
-                Memuat data siswa...
-            </div>
-
-            <form id="formEdit">
-
+        <div class="panel">
+            <form id="editSiswaForm">
                 <div class="form-grid">
-
                     <div class="form-group">
-                        <label for="nis">NIS</label>
-                        <input type="text" id="nis" required>
+                        <label>NIS</label>
+                        <input type="text" name="nis" id="nis" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="nama">Nama Siswa</label>
-                        <input type="text" id="nama" required>
+                        <label>Nama Siswa</label>
+                        <input type="text" name="nama" id="nama" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
+                        <label>Email</label>
+                        <input type="email" name="email" id="email" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="kelas">Kelas</label>
-                        <input type="text" id="kelas" required>
+                        <label>Kelas</label>
+                        <input type="text" name="kelas" id="kelas" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="jenis_kelamin">Jenis Kelamin</label>
-                        <select id="jenis_kelamin" required>
+                        <label>Jenis Kelamin</label>
+                        <select name="jenis_kelamin" id="jenis_kelamin" required>
                             <option value="">Pilih jenis kelamin</option>
                             <option value="Laki-laki">Laki-laki</option>
                             <option value="Perempuan">Perempuan</option>
@@ -51,202 +43,116 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="tanggal_lahir">Tanggal Lahir</label>
-                        <input type="date" id="tanggal_lahir">
+                        <label>Tanggal Lahir</label>
+                        <input type="date" name="tanggal_lahir" id="tanggal_lahir">
                     </div>
 
                     <div class="form-group">
-                        <label for="no_hp">No HP</label>
-                        <input type="text" id="no_hp">
+                        <label>No HP</label>
+                        <input type="text" name="no_hp" id="no_hp">
                     </div>
 
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" required>
+                        <label>Status</label>
+                        <select name="status" id="status" required>
                             <option value="Aktif">Aktif</option>
                             <option value="Tidak Aktif">Tidak Aktif</option>
                         </select>
                     </div>
 
                     <div class="form-group full">
-                        <label for="alamat">Alamat</label>
-                        <textarea id="alamat" rows="4"></textarea>
+                        <label>Alamat</label>
+                        <textarea name="alamat" id="alamat"></textarea>
                     </div>
-
                 </div>
 
                 <div class="actions">
-
-                    <a href="/siswa" class="btn btn-secondary">
+                    <a href="{{ url('/siswa') }}" class="btn btn-secondary">
                         <i class="fa-solid fa-arrow-left"></i>
                         Kembali
                     </a>
 
-                    <button type="submit" class="btn btn-primary" id="btnUpdate">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fa-solid fa-save"></i>
                         Update Siswa
                     </button>
-
                 </div>
-
             </form>
         </div>
-
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-$(document).ready(function () {
+    const siswaId = "{{ $id }}";
 
-    var id = getIdFromUrl();
-    var apiUrl = '/api/siswa';
+    async function loadDetailSiswa() {
+        try {
+            const response = await fetch(`/api/siswa/${siswaId}`, {
+                headers: { 'Accept': 'application/json' }
+            });
 
-    loadData();
+            const result = await response.json();
 
-    function getIdFromUrl() {
-        var path = window.location.pathname;
-        var parts = path.split('/');
-        return parts[2];
-    }
-
-    function loadData() {
-
-        $.ajax({
-            url: apiUrl + '/' + id,
-            type: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            },
-
-            success: function (response) {
-
-                var siswa = response.data;
-
-                $('#nis').val(siswa.nis);
-                $('#nama').val(siswa.nama);
-                $('#email').val(siswa.email);
-                $('#kelas').val(siswa.kelas);
-                $('#jenis_kelamin').val(siswa.jenis_kelamin);
-                $('#tanggal_lahir').val(siswa.tanggal_lahir);
-                $('#no_hp').val(siswa.no_hp);
-                $('#alamat').val(siswa.alamat);
-                $('#status').val(siswa.status);
-
-                $('#statusBox').text(
-                    'Data berhasil dimuat. Silakan lakukan perubahan.'
-                );
-            },
-
-            error: function () {
-
-                Swal.fire({
-                    title: 'Data Tidak Ditemukan',
-                    text: 'Data siswa yang kamu buka tidak tersedia.',
-                    icon: 'error',
-                    confirmButtonColor: '#1E3A8A'
-                }).then(function () {
-                    window.location.href = '/siswa';
-                });
-
+            if (!response.ok) {
+                alert(result.message ?? 'Data siswa tidak ditemukan.');
+                window.location.href = '/siswa';
+                return;
             }
-        });
 
+            const siswa = result.data;
+
+            document.getElementById('nis').value = siswa.nis ?? '';
+            document.getElementById('nama').value = siswa.nama ?? '';
+            document.getElementById('email').value = siswa.email ?? '';
+            document.getElementById('kelas').value = siswa.kelas ?? '';
+            document.getElementById('jenis_kelamin').value = siswa.jenis_kelamin ?? '';
+            document.getElementById('tanggal_lahir').value = siswa.tanggal_lahir ?? '';
+            document.getElementById('no_hp').value = siswa.no_hp ?? '';
+            document.getElementById('status').value = siswa.status ?? 'Aktif';
+            document.getElementById('alamat').value = siswa.alamat ?? '';
+        } catch (error) {
+            alert('Gagal memuat data siswa.');
+            window.location.href = '/siswa';
+        }
     }
 
-    $('#formEdit').submit(function (e) {
-
+    document.getElementById('editSiswaForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        var formData = {
-            nis: $('#nis').val(),
-            nama: $('#nama').val(),
-            email: $('#email').val(),
-            kelas: $('#kelas').val(),
-            jenis_kelamin: $('#jenis_kelamin').val(),
-            tanggal_lahir: $('#tanggal_lahir').val(),
-            no_hp: $('#no_hp').val(),
-            alamat: $('#alamat').val(),
-            status: $('#status').val()
-        };
+        const formData = new FormData(e.target);
+        formData.append('_method', 'PUT');
 
-        $('#btnUpdate').prop('disabled', true).html(`
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            Mengupdate...
-        `);
+        try {
+            const response = await fetch(`/api/siswa/${siswaId}`, {
+                method: 'POST',
+                body: formData,
+                headers: { 'Accept': 'application/json' }
+            });
 
-        $.ajax({
-            url: apiUrl + '/' + id,
-            type: 'PUT',
-            data: JSON.stringify(formData),
-            contentType: 'application/json',
-            headers: {
-                'Accept': 'application/json'
-            },
+            const result = await response.json();
 
-            success: function (response) {
+            if (!response.ok) {
+                let message = 'Gagal memperbarui data siswa.';
 
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: response.message || 'Data siswa berhasil diperbarui.',
-                    icon: 'success',
-                    confirmButtonColor: '#1E3A8A'
-                }).then(function () {
-                    window.location.href = '/siswa';
-                });
+                if (result.errors) {
+                    message = Object.values(result.errors).flat().join('\n');
+                } else if (result.message) {
+                    message = result.message;
+                }
 
-            },
-
-            error: function (xhr) {
-
-                Swal.fire({
-                    title: 'Gagal!',
-                    text: getErrorMessage(xhr, 'Data siswa gagal diperbarui.'),
-                    icon: 'error',
-                    confirmButtonColor: '#B91C1C'
-                });
-
-                $('#btnUpdate').prop('disabled', false).html(`
-                    <i class="fa-solid fa-save"></i>
-                    Update Siswa
-                `);
-
+                alert(message);
+                return;
             }
-        });
 
+            alert(result.message ?? 'Data siswa berhasil diperbarui.');
+            window.location.href = '/siswa';
+        } catch (error) {
+            alert('Terjadi kesalahan saat memperbarui data siswa.');
+        }
     });
 
-    function getErrorMessage(xhr, defaultMessage) {
-
-        var pesan = defaultMessage;
-
-        if (xhr.responseJSON) {
-
-            if (xhr.responseJSON.errors) {
-
-                var list = [];
-
-                $.each(xhr.responseJSON.errors, function (key, values) {
-
-                    $.each(values, function (index, value) {
-                        list.push(value);
-                    });
-
-                });
-
-                pesan = list.join('\n');
-
-            } else if (xhr.responseJSON.message) {
-
-                pesan = xhr.responseJSON.message;
-
-            }
-        }
-
-        return pesan;
-    }
-
-});
+    loadDetailSiswa();
 </script>
 @endsection

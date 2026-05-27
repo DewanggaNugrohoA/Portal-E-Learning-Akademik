@@ -9,7 +9,7 @@
         <!-- HEADER -->
         <div class="header">
             <h1>Data Siswa</h1>
-            <p>Kelola data siswa menggunakan REST API Laravel.</p>
+            <p>Data siswa ditampilkan menggunakan API dari endpoint /api/siswa.</p>
         </div>
 
         <!-- CARD -->
@@ -45,6 +45,14 @@
                 >
 
                 <a href="/siswa/create" class="btn btn-primary">
+                <div>
+                    <h2>Daftar Siswa</h2>
+                    <p style="margin:6px 0 0; color:#64748b;">
+                        Kelola data siswa menggunakan REST API Laravel.
+                    </p>
+                </div>
+
+                <a href="{{ url('/siswa/create') }}" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>
                     Tambah Siswa
                 </a>
@@ -132,6 +140,10 @@ $(document).ready(function () {
         });
 
     }
+    const dataSiswa = document.getElementById('dataSiswa');
+    const totalSiswa = document.getElementById('totalSiswa');
+    const totalAktif = document.getElementById('totalAktif');
+    const totalTidakAktif = document.getElementById('totalTidakAktif');
 
     function safeHtml(value) {
 
@@ -169,8 +181,38 @@ $(document).ready(function () {
                 var statusBadge = siswa.status === 'Aktif'
                     ? '<span class="badge badge-blue">Aktif</span>'
                     : '<span class="badge badge-red">Tidak Aktif</span>';
+    async function loadSiswa() {
+        try {
+            const response = await fetch('/api/siswa', {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-                rows += `
+            const result = await response.json();
+            const siswaList = result.data ?? [];
+
+            totalSiswa.textContent = siswaList.length;
+            totalAktif.textContent = siswaList.filter(siswa => siswa.status === 'Aktif').length;
+            totalTidakAktif.textContent = siswaList.filter(siswa => siswa.status === 'Tidak Aktif').length;
+
+            dataSiswa.innerHTML = '';
+
+            if (siswaList.length === 0) {
+                dataSiswa.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="empty">Belum ada data siswa.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            siswaList.forEach((siswa, index) => {
+                const statusBadge = siswa.status === 'Aktif'
+                    ? `<span class="badge badge-blue">Aktif</span>`
+                    : `<span class="badge badge-red">Tidak Aktif</span>`;
+
+                dataSiswa.innerHTML += `
                     <tr>
 
                         <td>${index + 1}</td>
@@ -207,6 +249,7 @@ $(document).ready(function () {
                                     class="btn btn-delete btnHapusSiswa"
                                     data-id="${siswa.id}"
                                 >
+                                <button type="button" onclick="deleteSiswa(${siswa.id})" class="btn btn-delete">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
 
@@ -253,6 +296,27 @@ $(document).ready(function () {
 
                     alert('Gagal menghapus data siswa.');
 
+        } catch (error) {
+            dataSiswa.innerHTML = `
+                <tr>
+                    <td colspan="9" class="empty">Gagal memuat data siswa dari API.</td>
+                </tr>
+            `;
+        }
+    }
+
+    async function deleteSiswa(id) {
+        const konfirmasi = confirm('Yakin ingin menghapus data siswa ini?');
+
+        if (!konfirmasi) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/siswa/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json'
                 }
 
             });
@@ -286,5 +350,15 @@ $(document).ready(function () {
     });
 
 });
+            const result = await response.json();
+
+            alert(result.message ?? 'Data siswa berhasil dihapus.');
+            loadSiswa();
+        } catch (error) {
+            alert('Gagal menghapus data siswa.');
+        }
+    }
+
+    loadSiswa();
 </script>
 @endsection

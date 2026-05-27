@@ -36,6 +36,15 @@
                     <i class="fa-solid fa-plus"></i>
                     Tambah Nilai
                 </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-save"></i>
+                        Simpan
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" id="btnBatal">
+                        Batal
+                    </button>
+                </form>
             </div>
 
             <div class="table-wrapper">
@@ -64,6 +73,56 @@
 
     </div>
 </div>
+@endsection
+
+<style>
+    .swal-modern {
+        border-radius: 28px !important;
+        padding: 28px !important;
+    }
+
+    .swal-confirm {
+        background: #1e3a8a !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 14px 22px !important;
+        font-weight: 700 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        box-shadow: 0 10px 25px rgba(30, 58, 138, 0.25);
+    }
+
+    .swal-danger {
+        background: #dc2626 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 14px 22px !important;
+        font-weight: 700 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        box-shadow: 0 10px 25px rgba(220, 38, 38, 0.25);
+    }
+
+    .swal-cancel {
+        background: #f1f5f9 !important;
+        color: #334155 !important;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 14px 22px !important;
+        font-weight: 700 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    .swal2-actions {
+        gap: 12px !important;
+    }
+</style>
 @endsection
 
 @section('scripts')

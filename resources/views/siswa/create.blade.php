@@ -5,45 +5,37 @@
 @section('content')
 <div class="page">
     <div class="container-small">
-
         <div class="header">
             <h1>Tambah Data Siswa</h1>
-            <p>Form tambah data siswa menggunakan REST API Laravel.</p>
+            <p>Data siswa akan disimpan menggunakan API endpoint /api/siswa.</p>
         </div>
 
-        <div class="card">
-
-            <div class="info-box">
-                Pastikan NIS dan email belum digunakan sebelumnya agar data dapat tersimpan.
-            </div>
-
-            <form id="formTambah">
-
+        <div class="panel">
+            <form id="createSiswaForm">
                 <div class="form-grid">
-
                     <div class="form-group">
-                        <label for="nis">NIS</label>
-                        <input type="text" id="nis" placeholder="Masukkan NIS" required>
+                        <label>NIS</label>
+                        <input type="text" name="nis" placeholder="Masukkan NIS" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="nama">Nama Siswa</label>
-                        <input type="text" id="nama" placeholder="Masukkan nama siswa" required>
+                        <label>Nama Siswa</label>
+                        <input type="text" name="nama" placeholder="Masukkan nama siswa" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" placeholder="contoh@gmail.com" required>
+                        <label>Email</label>
+                        <input type="email" name="email" placeholder="contoh@gmail.com" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="kelas">Kelas</label>
-                        <input type="text" id="kelas" placeholder="Contoh: X RPL 1" required>
+                        <label>Kelas</label>
+                        <input type="text" name="kelas" placeholder="Contoh: X RPL 1" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="jenis_kelamin">Jenis Kelamin</label>
-                        <select id="jenis_kelamin" required>
+                        <label>Jenis Kelamin</label>
+                        <select name="jenis_kelamin" required>
                             <option value="">Pilih jenis kelamin</option>
                             <option value="Laki-laki">Laki-laki</option>
                             <option value="Perempuan">Perempuan</option>
@@ -51,144 +43,82 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="tanggal_lahir">Tanggal Lahir</label>
-                        <input type="date" id="tanggal_lahir">
+                        <label>Tanggal Lahir</label>
+                        <input type="date" name="tanggal_lahir">
                     </div>
 
                     <div class="form-group">
-                        <label for="no_hp">No HP</label>
-                        <input type="text" id="no_hp" placeholder="Masukkan nomor HP">
+                        <label>No HP</label>
+                        <input type="text" name="no_hp" placeholder="Masukkan nomor HP">
                     </div>
 
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" required>
+                        <label>Status</label>
+                        <select name="status" required>
                             <option value="Aktif">Aktif</option>
                             <option value="Tidak Aktif">Tidak Aktif</option>
                         </select>
                     </div>
 
                     <div class="form-group full">
-                        <label for="alamat">Alamat</label>
-                        <textarea id="alamat" rows="4" placeholder="Masukkan alamat siswa"></textarea>
+                        <label>Alamat</label>
+                        <textarea name="alamat" placeholder="Masukkan alamat siswa"></textarea>
                     </div>
-
                 </div>
 
                 <div class="actions">
-                    <a href="/siswa" class="btn btn-secondary">
+                    <a href="{{ url('/siswa') }}" class="btn btn-secondary">
                         <i class="fa-solid fa-arrow-left"></i>
                         Kembali
                     </a>
 
-                    <button type="submit" class="btn btn-primary" id="btnSimpan">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fa-solid fa-save"></i>
                         Simpan Siswa
                     </button>
                 </div>
-
             </form>
         </div>
-
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-$(document).ready(function () {
-
-    $('#formTambah').submit(function (e) {
-
+    document.getElementById('createSiswaForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        var formData = {
-            nis: $('#nis').val(),
-            nama: $('#nama').val(),
-            email: $('#email').val(),
-            kelas: $('#kelas').val(),
-            jenis_kelamin: $('#jenis_kelamin').val(),
-            tanggal_lahir: $('#tanggal_lahir').val(),
-            no_hp: $('#no_hp').val(),
-            alamat: $('#alamat').val(),
-            status: $('#status').val()
-        };
+        const formData = new FormData(e.target);
 
-        $('#btnSimpan').prop('disabled', true).html(`
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            Menyimpan...
-        `);
+        try {
+            const response = await fetch('/api/siswa', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-        $.ajax({
-            url: '/api/siswa',
-            type: 'POST',
-            data: JSON.stringify(formData),
-            contentType: 'application/json',
-            headers: {
-                'Accept': 'application/json'
-            },
+            const result = await response.json();
 
-            success: function (response) {
+            if (!response.ok) {
+                let message = 'Gagal menyimpan data siswa.';
 
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: response.message || 'Data siswa berhasil ditambahkan.',
-                    icon: 'success',
-                    confirmButtonColor: '#1E3A8A'
-                }).then(function () {
-                    window.location.href = '/siswa';
-                });
+                if (result.errors) {
+                    message = Object.values(result.errors).flat().join('\n');
+                } else if (result.message) {
+                    message = result.message;
+                }
 
-            },
-
-            error: function (xhr) {
-
-                Swal.fire({
-                    title: 'Gagal!',
-                    text: getErrorMessage(xhr, 'Data siswa gagal ditambahkan.'),
-                    icon: 'error',
-                    confirmButtonColor: '#B91C1C'
-                });
-
-                $('#btnSimpan').prop('disabled', false).html(`
-                    <i class="fa-solid fa-save"></i>
-                    Simpan Siswa
-                `);
+                alert(message);
+                return;
             }
-        });
 
-    });
-
-    function getErrorMessage(xhr, defaultMessage) {
-
-        var pesan = defaultMessage;
-
-        if (xhr.responseJSON) {
-
-            if (xhr.responseJSON.errors) {
-
-                var list = [];
-
-                $.each(xhr.responseJSON.errors, function (key, values) {
-
-                    $.each(values, function (index, value) {
-                        list.push(value);
-                    });
-
-                });
-
-                pesan = list.join('\n');
-
-            } else if (xhr.responseJSON.message) {
-
-                pesan = xhr.responseJSON.message;
-
-            }
+            alert(result.message ?? 'Data siswa berhasil ditambahkan.');
+            window.location.href = '/siswa';
+        } catch (error) {
+            alert('Terjadi kesalahan saat menyimpan data siswa.');
         }
-
-        return pesan;
-    }
-
-});
+    });
 </script>
 @endsection

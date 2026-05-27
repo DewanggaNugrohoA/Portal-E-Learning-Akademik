@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-        * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box; 
+        }
 
         :root {
             --primary: #1e3a8a;
@@ -32,7 +34,9 @@
             font-size: 14px;
         }
 
-        a { text-decoration: none; }
+        a { 
+            text-decoration: none; 
+        }
 
         .admin-wrapper {
             min-height: 100vh;
@@ -120,6 +124,8 @@
 
         .sidebar-section {
             margin-bottom: 24px;
+        .sidebar-section { 
+            margin-bottom: 24px; 
         }
 
         .sidebar-title {
@@ -155,6 +161,10 @@
 
         .page {
             padding: 32px;
+        }
+
+        .page { 
+            padding: 32px; 
         }
 
         .container {
@@ -225,6 +235,29 @@
             flex-wrap: wrap;
         }
 
+        .toolbar h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin: 12px 0 7px;
+            color: #334155;
+        }
+
         input,
         select,
         textarea {
@@ -263,6 +296,7 @@
             justify-content: center;
             gap: 7px;
             font-weight: 500;
+            font-family: inherit;
         }
 
         .btn-primary,
@@ -353,6 +387,118 @@
             color: var(--red-text);
         }
 
+        .info-box {
+            background: var(--primary-soft);
+            color: var(--primary);
+            padding: 12px 14px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .profile-top {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .detail-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            color: #111827;
+            font-size: 24px;
+        }
+
+        .profile-info p {
+            margin: 6px 0 0;
+            color: var(--muted);
+        }
+
+        .badge-row {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .content-grid {
+            margin-top: 22px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .section h3 { 
+            margin-top: 0; 
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .data-item {
+            background: #f8fbff;
+            border: 1px solid #e5eaf3;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .data-item.full {
+            grid-column: 1 / -1;
+        }
+
+        .label {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .value {
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .dashboard-card {
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .dashboard-card i {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+
+        .dashboard-card h3 {
+            margin: 0 0 8px;
+        }
+
+        .dashboard-card p {
+            margin: 0;
+            color: var(--muted);
+        }
+
         @media (max-width: 1000px) {
             .admin-wrapper {
                 display: block;
@@ -366,12 +512,6 @@
 
             .main-content {
                 margin-left: 0;
-            }
-
-            .navbar {
-                position: static;
-                padding: 14px 20px;
-                height: auto;
             }
 
             .page {
@@ -392,11 +532,7 @@
     @include('layouts.sidebar')
 
     <main class="main-content">
-        @include('layouts.navbar')
-
-        <div id="main-container">
-            @yield('content')
-        </div>
+        @yield('content')
     </main>
 </div>
 

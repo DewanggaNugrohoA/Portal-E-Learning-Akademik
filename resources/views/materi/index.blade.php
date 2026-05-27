@@ -30,7 +30,7 @@
         <div class="panel">
             <div class="toolbar">
                 <div>
-                    <h2 style="margin:0;">Daftar Materi</h2>
+                    <h2>Daftar Materi</h2>
                     <p style="margin:6px 0 0; color:#64748b;">
                         Kelola data materi, mata pelajaran, guru, dan file pembelajaran.
                     </p>
@@ -88,6 +88,64 @@ async function loadMateri() {
         totalMateri.textContent = data.length;
 
         if (data.length === 0) {
+            data.forEach((materi, index) => {
+                const deskripsi = materi.deskripsi
+                    ? materi.deskripsi.substring(0, 70)
+                    : '-';
+
+                const tanggal = materi.created_at
+                    ? new Date(materi.created_at).toLocaleString('id-ID')
+                    : '-';
+
+                const fileMateri = materi.file_materi
+                    ? `<a href="/assets/uploads/materi/${materi.file_materi}" target="_blank" class="btn btn-detail">
+                            <i class="fa-solid fa-file"></i>
+                            Lihat File
+                       </a>`
+                    : `<span class="badge badge-red">Tidak ada file</span>`;
+
+                materiTable.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+
+                        <td>
+                            <strong>${materi.judul_materi ?? '-'}</strong>
+                            <div style="color:#64748b; font-size:13px; margin-top:4px;">
+                                ${deskripsi}
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="badge badge-blue">
+                                ${materi.nama_mata_pelajaran ?? '-'}
+                            </span>
+                        </td>
+
+                        <td>${materi.nama_guru ?? '-'}</td>
+
+                        <td>${fileMateri}</td>
+
+                        <td>${tanggal}</td>
+
+                        <td>
+                            <div class="action-group">
+                                <a href="/materi/${materi.id}" class="btn btn-detail">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+
+                                <a href="/materi/${materi.id}/edit" class="btn btn-edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+
+                                <button type="button" onclick="deleteMateri(${materi.id})" class="btn btn-delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (error) {
             materiTable.innerHTML = `
                 <tr>
                     <td colspan="7" class="empty">Belum ada data materi.</td>
@@ -187,5 +245,6 @@ async function deleteMateri(id) {
 }
 
 loadMateri();
+    loadMateri();
 </script>
 @endsection
