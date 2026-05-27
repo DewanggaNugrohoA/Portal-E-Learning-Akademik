@@ -1,68 +1,99 @@
 @extends('layouts.app')
 
+@section('title', 'Tambah Materi')
+
 @section('content')
-<div class="container">
-    <h1>Tambah Materi Pembelajaran</h1>
-
-    <form action="{{ route('materi.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-
-        <div style="margin-bottom:15px;">
-            <label>Judul Materi</label><br>
-            <input type="text" name="judul_materi" value="{{ old('judul_materi') }}" style="width:100%;">
-            @error('judul_materi')
-                <div style="color:red;">{{ $message }}</div>
-            @enderror
+<div class="page">
+    <div class="container-small">
+        <div class="header">
+            <h1>Tambah Materi Pembelajaran</h1>
+            <p>Data materi akan disimpan menggunakan API endpoint <b>/api/materi</b>.</p>
         </div>
 
-        <div style="margin-bottom:15px;">
-            <label>Deskripsi</label><br>
-            <textarea name="deskripsi" rows="5" style="width:100%;">{{ old('deskripsi') }}</textarea>
-            @error('deskripsi')
-                <div style="color:red;">{{ $message }}</div>
-            @enderror
-        </div>
+        <div class="panel">
+            <form id="createMateriForm" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Judul Materi</label>
+                        <input type="text" name="judul_materi" placeholder="Masukkan judul materi" required>
+                    </div>
 
-        <div style="margin-bottom:15px;">
-            <label>Mata Pelajaran</label><br>
-            <select name="mata_pelajaran_id" style="width:100%;">
-                <option value="">-- Pilih Mata Pelajaran --</option>
-                @foreach ($mataPelajarans as $mapel)
-                    <option value="{{ $mapel->id }}" {{ old('mata_pelajaran_id') == $mapel->id ? 'selected' : '' }}>
-                        {{ $mapel->nama_mapel }}
-                    </option>
-                @endforeach
-            </select>
-            @error('mata_pelajaran_id')
-                <div style="color:red;">{{ $message }}</div>
-            @enderror
-        </div>
+                    <div class="form-group">
+                        <label>Nama Mata Pelajaran</label>
+                        <input type="text" name="nama_mata_pelajaran" placeholder="Contoh: Pemrograman Web">
+                    </div>
 
-        <div style="margin-bottom:15px;">
-            <label>Guru</label><br>
-            <select name="guru_id" style="width:100%;">
-                <option value="">-- Pilih Guru --</option>
-                @foreach ($gurus as $guru)
-                    <option value="{{ $guru->id }}" {{ old('guru_id') == $guru->id ? 'selected' : '' }}>
-                        {{ $guru->nama }}
-                    </option>
-                @endforeach
-            </select>
-            @error('guru_id')
-                <div style="color:red;">{{ $message }}</div>
-            @enderror
-        </div>
+                    <div class="form-group">
+                        <label>Nama Guru</label>
+                        <input type="text" name="nama_guru" placeholder="Masukkan nama guru">
+                    </div>
 
-        <div style="margin-bottom:15px;">
-            <label>Upload File Materi</label><br>
-            <input type="file" name="file_materi">
-            @error('file_materi')
-                <div style="color:red;">{{ $message }}</div>
-            @enderror
-        </div>
+                    <div class="form-group full">
+                        <label>Deskripsi Materi</label>
+                        <textarea name="deskripsi" placeholder="Tuliskan deskripsi materi"></textarea>
+                    </div>
 
-        <button type="submit">Simpan</button>
-        <a href="{{ route('materi.index') }}">Kembali</a>
-    </form>
+                    <div class="form-group full">
+                        <label>Upload File Materi</label>
+                        <input type="file" name="file_materi">
+                        <small style="color:#64748b;">Format: PDF, DOC, DOCX, PPT, PPTX, MP4, ZIP, RAR. Maksimal 20 MB.</small>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a href="{{ url('/materi') }}" class="btn btn-secondary">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Kembali
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-save"></i>
+                        Simpan Materi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.getElementById('createMateriForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('/api/materi', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                let errorMessage = 'Gagal menyimpan data materi.';
+
+                if (result.errors) {
+                    errorMessage = Object.values(result.errors).flat().join('\n');
+                } else if (result.message) {
+                    errorMessage = result.message;
+                }
+
+                alert(errorMessage);
+                return;
+            }
+
+            alert(result.message);
+            window.location.href = '/materi';
+        } catch (error) {
+            alert('Terjadi kesalahan saat menyimpan data materi.');
+        }
+    });
+</script>
 @endsection

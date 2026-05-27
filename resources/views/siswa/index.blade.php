@@ -6,8 +6,8 @@
 <div class="page">
     <div class="container">
         <div class="header">
-            <h1>Manajemen Data Siswa</h1>
-            <p>Kelola data siswa Portal E-Learning Akademik. Data ditampilkan dan dihapus menggunakan jQuery AJAX.</p>
+            <h1>Data Siswa</h1>
+            <p>Data siswa ditampilkan menggunakan API dari endpoint /api/siswa.</p>
         </div>
 
         <div class="stat-grid">
@@ -17,23 +17,26 @@
             </div>
 
             <div class="stat-card">
-                <span>Siswa Aktif</span>
-                <h2 id="totalAktif">0</h2>
+                <span>Modul</span>
+                <h2>Siswa</h2>
             </div>
 
             <div class="stat-card">
-                <span>Tidak Aktif</span>
-                <h2 id="totalTidakAktif">0</h2>
+                <span>Penanggung Jawab</span>
+                <h2>Sevi</h2>
             </div>
         </div>
 
         <div class="panel">
             <div class="toolbar">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Cari NIS, nama, email, kelas, no HP, atau status...">
+                <div>
+                    <h2 style="margin:0;">Daftar Siswa</h2>
+                    <p style="margin:6px 0 0; color:#64748b;">
+                        Kelola data siswa menggunakan API.
+                    </p>
                 </div>
 
-                <a href="/siswa/create" class="btn btn-primary">
+                <a href="{{ url('/siswa/create') }}" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>
                     Tambah Siswa
                 </a>
@@ -44,17 +47,17 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Siswa</th>
                             <th>NIS</th>
+                            <th>Nama</th>
+                            <th>Email</th>
                             <th>Kelas</th>
                             <th>Jenis Kelamin</th>
-                            <th>No HP</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
 
-                    <tbody id="dataSiswa">
+                    <tbody id="siswaTable">
                         <tr>
                             <td colspan="8" class="empty">Memuat data siswa...</td>
                         </tr>
@@ -68,198 +71,97 @@
 
 @section('scripts')
 <script>
-$(document).ready(function () {
-    var apiUrl = '/api/siswa';
-    var siswaList = [];
+    const siswaTable = document.getElementById('siswaTable');
+    const totalSiswa = document.getElementById('totalSiswa');
+
+    async function loadSiswa() {
+        try {
+            const response = await fetch('/api/siswa', {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+            const data = result.data ?? [];
+
+            siswaTable.innerHTML = '';
+            totalSiswa.textContent = data.length;
+
+            if (data.length === 0) {
+                siswaTable.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty">Belum ada data siswa.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            data.forEach((siswa, index) => {
+                const statusBadge = siswa.status === 'Aktif'
+                    ? `<span class="badge badge-blue">Aktif</span>`
+                    : `<span class="badge badge-red">Tidak Aktif</span>`;
+
+                siswaTable.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${siswa.nis ?? '-'}</td>
+                        <td><strong>${siswa.nama ?? '-'}</strong></td>
+                        <td>${siswa.email ?? '-'}</td>
+                        <td>${siswa.kelas ?? '-'}</td>
+                        <td>${siswa.jenis_kelamin ?? '-'}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-group">
+                                <a href="/siswa/${siswa.id}" class="btn btn-detail">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+
+                                <a href="/siswa/${siswa.id}/edit" class="btn btn-edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+
+                                <button type="button" onclick="deleteSiswa(${siswa.id})" class="btn btn-delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (error) {
+            siswaTable.innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty">Gagal memuat data siswa.</td>
+                </tr>
+            `;
+        }
+    }
+
+    async function deleteSiswa(id) {
+        const konfirmasi = confirm('Yakin ingin menghapus data siswa ini?');
+
+        if (!konfirmasi) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/siswa/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            alert(result.message);
+            loadSiswa();
+        } catch (error) {
+            alert('Gagal menghapus data siswa.');
+        }
+    }
 
     loadSiswa();
-
-    function loadSiswa() {
-        $.ajax({
-            url: apiUrl,
-            type: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            },
-            success: function (response) {
-                siswaList = response.data || [];
-                updateStats(siswaList);
-                renderTable(siswaList);
-            },
-            error: function () {
-                $('#dataSiswa').html(
-                    '<tr>' +
-                        '<td colspan="8" class="empty" style="color:#dc2626;">Gagal memuat data siswa.</td>' +
-                    '</tr>'
-                );
-            }
-        });
-    }
-
-    function updateStats(data) {
-        var aktif = 0;
-        var tidakAktif = 0;
-
-        $.each(data, function (index, item) {
-            if (item.status === 'Aktif') {
-                aktif++;
-            }
-
-            if (item.status === 'Tidak Aktif') {
-                tidakAktif++;
-            }
-        });
-
-        $('#totalSiswa').text(data.length);
-        $('#totalAktif').text(aktif);
-        $('#totalTidakAktif').text(tidakAktif);
-    }
-
-    function safeHtml(value) {
-        if (value === null || value === undefined || value === '') {
-            return '-';
-        }
-
-        return String(value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    }
-
-    function getInitial(name) {
-        if (name && name.length > 0) {
-            return safeHtml(name.charAt(0).toUpperCase());
-        }
-
-        return 'S';
-    }
-
-    function statusBadge(status) {
-        if (status === 'Aktif') {
-            return '<span class="badge badge-green">Aktif</span>';
-        }
-
-        return '<span class="badge badge-red">Tidak Aktif</span>';
-    }
-
-    function renderTable(data) {
-        var rows = '';
-
-        if (data.length === 0) {
-            rows = '<tr><td colspan="8" class="empty">Belum ada data siswa.</td></tr>';
-        } else {
-            $.each(data, function (index, siswa) {
-                rows +=
-                    '<tr>' +
-                        '<td>' + (index + 1) + '</td>' +
-
-                        '<td>' +
-                            '<div class="student-info">' +
-                                '<div class="avatar">' + getInitial(siswa.nama) + '</div>' +
-                                '<div>' +
-                                    '<div class="student-name">' + safeHtml(siswa.nama) + '</div>' +
-                                    '<div class="student-email">' + safeHtml(siswa.email) + '</div>' +
-                                '</div>' +
-                            '</div>' +
-                        '</td>' +
-
-                        '<td><span class="badge badge-blue">' + safeHtml(siswa.nis) + '</span></td>' +
-                        '<td>' + safeHtml(siswa.kelas) + '</td>' +
-                        '<td>' + safeHtml(siswa.jenis_kelamin) + '</td>' +
-                        '<td>' + safeHtml(siswa.no_hp) + '</td>' +
-                        '<td>' + statusBadge(siswa.status) + '</td>' +
-
-                        '<td>' +
-                            '<div class="action-group">' +
-                                '<a href="/siswa/' + siswa.id + '" class="btn btn-detail btn-icon" title="Detail" aria-label="Detail">' +
-                                    '<i class="fa-solid fa-eye"></i>' +
-                                '</a>' +
-
-                                '<a href="/siswa/' + siswa.id + '/edit" class="btn btn-edit btn-icon" title="Edit" aria-label="Edit">' +
-                                    '<i class="fa-solid fa-pen-to-square"></i>' +
-                                '</a>' +
-
-                                '<button type="button" class="btn btn-delete btn-icon btnHapus" data-id="' + siswa.id + '" title="Hapus" aria-label="Hapus">' +
-                                    '<i class="fa-solid fa-trash"></i>' +
-                                '</button>' +
-                            '</div>' +
-                        '</td>' +
-                    '</tr>';
-            });
-        }
-
-        $('#dataSiswa').html(rows);
-    }
-
-    $('#searchInput').on('keyup', function () {
-        var keyword = $(this).val().toLowerCase();
-        var filtered = [];
-
-        $.each(siswaList, function (index, siswa) {
-            var gabungan =
-                String(siswa.nis || '') + ' ' +
-                String(siswa.nama || '') + ' ' +
-                String(siswa.email || '') + ' ' +
-                String(siswa.kelas || '') + ' ' +
-                String(siswa.jenis_kelamin || '') + ' ' +
-                String(siswa.no_hp || '') + ' ' +
-                String(siswa.status || '');
-
-            if (gabungan.toLowerCase().indexOf(keyword) !== -1) {
-                filtered.push(siswa);
-            }
-        });
-
-        renderTable(filtered);
-    });
-
-    $(document).on('click', '.btnHapus', function () {
-        var id = $(this).data('id');
-
-        Swal.fire({
-            title: 'Hapus Data Siswa?',
-            text: 'Data yang sudah dihapus tidak bisa dikembalikan.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Hapus',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#B91C1C',
-            cancelButtonColor: '#6B7280',
-            reverseButtons: true
-        }).then(function (result) {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: apiUrl + '/' + id,
-                    type: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    success: function (response) {
-                        Swal.fire({
-                            title: 'Berhasil!',
-                            text: response.message || 'Data siswa berhasil dihapus.',
-                            icon: 'success',
-                            confirmButtonText: 'Oke',
-                            confirmButtonColor: '#1E3A8A'
-                        });
-
-                        loadSiswa();
-                    },
-                    error: function () {
-                        Swal.fire({
-                            title: 'Gagal!',
-                            text: 'Data siswa gagal dihapus.',
-                            icon: 'error',
-                            confirmButtonText: 'Coba Lagi',
-                            confirmButtonColor: '#B91C1C'
-                        });
-                    }
-                });
-            }
-        });
-    });
-});
 </script>
 @endsection
