@@ -1,125 +1,148 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Nilai</title>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-</head>
-<body>
-    <h2>Edit Data Nilai</h2>
-    <p> Modul Nilai - Karina Hodiyah Ramadona</p>
+@extends('layouts.app')
 
-    <form id="formNilai">
-        <label>Guru</label><br>
-        <select id="guru_id" required>
-            <option value="">--Pilih Guru--</option>
-        </select>
+@section('title', 'Edit Nilai')
 
-        <br><br>
+@section('content')
+<div class="page">
+    <div class="container">
+        <div class="header">
+            <h1>Edit Data Nilai</h1>
+            <p>Perbarui data nilai pada Portal E-Learning Akademik.</p>
+        </div>
 
-        <label>KKM</label><br>
-        <input type="number" id="kkm" min="0" max="100" required>
+        <div class="panel">
+            <form id="formNilai">
+                <div class="form-group">
+                    <label>Guru</label>
+                    <select id="guru_id" class="form-control" required>
+                        <option value="">-- Pilih Guru --</option>
+                    </select>
+                </div>
 
-        <br><br>
+                <div class="form-group">
+                    <label>KKM</label>
+                    <input type="number" id="kkm" class="form-control" min="0" max="100" required>
+                </div>
 
-        <label>Deskripsi Predikat A</label><br>
-        <textarea id="deskripsi_a" required></textarea>
+                <div class="form-group">
+                    <label>Deskripsi Predikat A</label>
+                    <textarea id="deskripsi_a" class="form-control" required></textarea>
+                </div>
 
-        <br><br>
+                <div class="form-group">
+                    <label>Deskripsi Predikat B</label>
+                    <textarea id="deskripsi_b" class="form-control" required></textarea>
+                </div>
 
-        <label>Deskripsi Predikat B</label><br>
-        <textarea id="deskripsi_b" required></textarea>
+                <div class="form-group">
+                    <label>Deskripsi Predikat C</label>
+                    <textarea id="deskripsi_c" class="form-control" required></textarea>
+                </div>
 
-        <br><br>
+                <div class="form-group">
+                    <label>Deskripsi Predikat D</label>
+                    <textarea id="deskripsi_d" class="form-control" required></textarea>
+                </div>
 
-        <label>Deskripsi Predikat C</label><br>
-        <textarea id="deskripsi_c" required></textarea>
+                <div class="action-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-save"></i>
+                        Update
+                    </button>
 
-        <br><br>
+                    <a href="/nilai" class="btn btn-detail">
+                        Kembali
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
 
-        <label>Deskripsi Predikat D</label><br>
-        <textarea id="deskripsi_d" required></textarea>
+@section('scripts')
+<script>
+$(document).ready(function () {
+    var id = "{{ $id }}";
 
-        <br><br>
+    function loadGuru(selectedGuruId) {
+        $.ajax({
+            url: '/api/guru-list',
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                var options = '<option value="">-- Pilih Guru --</option>';
 
-        <button type="submit">Update</button>
-        <a href="/nilai">Kembali</a>
-    </form>
-
-    <script>
-        $(document).ready(function() {
-            const id = "{{ $id }}";
-
-            function loadGuru(selectedGuruId) {
-                $.ajax({
-                    url: "/api/guru",
-                    type: "GET",
-                    success: function(response) {
-                        let options = "<option value=''>--Pilih Guru--</option>";
-
-                        $.each(response.data, function(index, guru) {
-                            const selected = guru.id == selectedGuruId ? "selected" : "";
-                            options += `<option value="${guru.id}" ${selected}>${guru.nama}</option>`;
-                        });
-
-                        $("#guru_id").html(options);
-                    },
-                    error: function() {
-                        alert("Gagal Memuat Data Guru");
-                    }
+                $.each(response.data || [], function (index, guru) {
+                    var selected = guru.id == selectedGuruId ? 'selected' : '';
+                    options += '<option value="' + guru.id + '" ' + selected + '>' + guru.nama + '</option>';
                 });
+
+                $('#guru_id').html(options);
+            },
+            error: function () {
+                alert('Gagal memuat data guru.');
             }
-
-            function loadDetailNilai() {
-                $.ajax({
-                    url: `/api/nilai/${id}`,
-                    type: "GET",
-                    success: function(response) {
-                        const nilai = response.data;
-                        
-                        $("#kkm").val(nilai.kkm);
-                        $("#deskripsi_a").val(nilai.deskripsi_a);
-                        $("#deskripsi_b").val(nilai.deskripsi_b);
-                        $("#deskripsi_c").val(nilai.deskripsi_c);
-                        $("#deskripsi_d").val(nilai.deskripsi_d);
-
-                        loadGuru(nilai.guru_id);
-                    },
-                    error: function() {
-                        alert("Data Nilai Tidak Ditemukan");
-                        window.location.href = "/nilai";
-                    }
-                });
-            }
-
-            $("#formNilai").submit(function(e) {
-                e.preventDefault();
-
-                const dataNilai = {
-                    guru_id: $("#guru_id").val(),
-                    kkm: $("#kkm").val(),
-                    deskripsi_a: $("#deskripsi_a").val(),
-                    deskripsi_b: $("#deskripsi_b").val(),
-                    deskripsi_c: $("#deskripsi_c").val(),
-                    deskripsi_d: $("#deskripsi_d").val(),
-                };
-
-                $.ajax({
-                    url: `/api/nilai/${id}`,
-                    type: "PUT",
-                    data: dataNilai,
-                    success: function(response) {
-                        alert(response.message);
-                        window.location.href = "/nilai";
-                    },
-                    error: function() {
-                        alert("Gagal Memperbarui Data Nilai");
-                    }
-                });
-            });
-
-            loadDetailNilai();
         });
-    </script>
-</body>
-</html>
+    }
+
+    function loadDetailNilai() {
+        $.ajax({
+            url: '/api/nilai/' + id,
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                var nilai = response.data;
+
+                $('#kkm').val(nilai.kkm);
+                $('#deskripsi_a').val(nilai.deskripsi_a);
+                $('#deskripsi_b').val(nilai.deskripsi_b);
+                $('#deskripsi_c').val(nilai.deskripsi_c);
+                $('#deskripsi_d').val(nilai.deskripsi_d);
+
+                loadGuru(nilai.guru_id);
+            },
+            error: function () {
+                alert('Data nilai tidak ditemukan.');
+                window.location.href = '/nilai';
+            }
+        });
+    }
+
+    $('#formNilai').submit(function (e) {
+        e.preventDefault();
+
+        var dataNilai = {
+            guru_id: $('#guru_id').val(),
+            kkm: $('#kkm').val(),
+            deskripsi_a: $('#deskripsi_a').val(),
+            deskripsi_b: $('#deskripsi_b').val(),
+            deskripsi_c: $('#deskripsi_c').val(),
+            deskripsi_d: $('#deskripsi_d').val()
+        };
+
+        $.ajax({
+            url: '/api/nilai/' + id,
+            type: 'PUT',
+            data: dataNilai,
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                alert(response.message || 'Data nilai berhasil diperbarui.');
+                window.location.href = '/nilai';
+            },
+            error: function () {
+                alert('Gagal memperbarui data nilai.');
+            }
+        });
+    });
+
+    loadDetailNilai();
+});
+</script>
+@endsection

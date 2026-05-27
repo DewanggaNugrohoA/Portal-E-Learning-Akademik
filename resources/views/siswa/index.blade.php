@@ -120,44 +120,6 @@
         </div>
     </div>
 </div>
-
-<style>
-.swal-modern {
-    border-radius: 28px !important;
-    padding: 28px !important;
-}
-
-.swal-confirm {
-    background: #1e3a8a !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 22px !important;
-    font-weight: 700 !important;
-}
-
-.swal-danger {
-    background: #dc2626 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 22px !important;
-    font-weight: 700 !important;
-}
-
-.swal-cancel {
-    background: #f1f5f9 !important;
-    color: #334155 !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 22px !important;
-    font-weight: 700 !important;
-}
-
-.swal2-actions {
-    gap: 12px !important;
-}
-</style>
 @endsection
 
 @section('scripts')
@@ -172,18 +134,14 @@ $(document).ready(function () {
         $.ajax({
             url: apiUrl,
             type: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            },
+            headers: { 'Accept': 'application/json' },
             success: function (response) {
                 siswaList = response.data || [];
                 updateStats(siswaList);
                 renderTable(siswaList);
             },
             error: function () {
-                $('#dataSiswa').html(
-                    '<tr><td colspan="9" class="empty" style="color:#dc2626;">Gagal memuat data siswa.</td></tr>'
-                );
+                $('#dataSiswa').html('<tr><td colspan="9" class="empty">Gagal memuat data siswa.</td></tr>');
             }
         });
     }
@@ -203,9 +161,7 @@ $(document).ready(function () {
     }
 
     function safeHtml(value) {
-        if (value === null || value === undefined || value === '') {
-            return '-';
-        }
+        if (value === null || value === undefined || value === '') return '-';
 
         return String(value)
             .replace(/&/g, '&amp;')
@@ -213,38 +169,6 @@ $(document).ready(function () {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
-    }
-
-    function showSuccessPopup(title, message) {
-        Swal.fire({
-            title: title,
-            html: '<p style="color:#64748b; margin:0; font-size:15px; line-height:1.6;">' + message + '</p>',
-            icon: 'success',
-            width: '480px',
-            background: '#ffffff',
-            buttonsStyling: false,
-            customClass: {
-                popup: 'swal-modern',
-                confirmButton: 'swal-confirm'
-            },
-            confirmButtonText: '<i class="fa-solid fa-check"></i> Oke'
-        });
-    }
-
-    function showErrorPopup(title, message) {
-        Swal.fire({
-            title: title,
-            html: '<p style="color:#64748b; margin:0; font-size:15px; line-height:1.6;">' + message + '</p>',
-            icon: 'error',
-            width: '480px',
-            background: '#ffffff',
-            buttonsStyling: false,
-            customClass: {
-                popup: 'swal-modern',
-                confirmButton: 'swal-danger'
-            },
-            confirmButtonText: '<i class="fa-solid fa-xmark"></i> Tutup'
-        });
     }
 
     function renderTable(data) {
@@ -270,13 +194,13 @@ $(document).ready(function () {
                         '<td>' + statusBadge + '</td>' +
                         '<td>' +
                             '<div class="action-group">' +
-                                '<button type="button" class="btn btn-detail btn-icon btnDetail" data-id="' + siswa.id + '">' +
+                                '<button type="button" class="btn btn-detail btnDetail" data-id="' + siswa.id + '">' +
                                     '<i class="fa-solid fa-eye"></i>' +
                                 '</button>' +
-                                '<button type="button" class="btn btn-edit btn-icon btnEdit" data-id="' + siswa.id + '">' +
+                                '<button type="button" class="btn btn-edit btnEdit" data-id="' + siswa.id + '">' +
                                     '<i class="fa-solid fa-pen-to-square"></i>' +
                                 '</button>' +
-                                '<button type="button" class="btn btn-delete btn-icon btnHapus" data-id="' + siswa.id + '">' +
+                                '<button type="button" class="btn btn-delete btnHapus" data-id="' + siswa.id + '">' +
                                     '<i class="fa-solid fa-trash"></i>' +
                                 '</button>' +
                             '</div>' +
@@ -330,64 +254,37 @@ $(document).ready(function () {
         var method = id ? 'PUT' : 'POST';
         var url = id ? apiUrl + '/' + id : apiUrl;
 
-        var dataForm = {
-            nis: $('#nis').val(),
-            nama: $('#nama').val(),
-            email: $('#email').val(),
-            kelas: $('#kelas').val(),
-            jenis_kelamin: $('#jenis_kelamin').val(),
-            tanggal_lahir: $('#tanggal_lahir').val(),
-            no_hp: $('#no_hp').val(),
-            status: $('#status').val(),
-            alamat: $('#alamat').val()
-        };
+        $.ajax({
+            url: url,
+            type: method,
+            headers: { 'Accept': 'application/json' },
+            data: {
+                nis: $('#nis').val(),
+                nama: $('#nama').val(),
+                email: $('#email').val(),
+                kelas: $('#kelas').val(),
+                jenis_kelamin: $('#jenis_kelamin').val(),
+                tanggal_lahir: $('#tanggal_lahir').val(),
+                no_hp: $('#no_hp').val(),
+                status: $('#status').val(),
+                alamat: $('#alamat').val()
+            },
+            success: function (response) {
+                alert(response.message || 'Data siswa berhasil disimpan.');
+                resetForm();
+                showTable();
+                loadSiswa();
+            },
+            error: function (xhr) {
+                var message = 'Data siswa gagal disimpan.';
 
-        Swal.fire({
-            title: id ? 'Update Data Siswa?' : 'Simpan Data Siswa?',
-            html: '<p style="color:#64748b; font-size:15px;">Pastikan data siswa sudah benar sebelum disimpan.</p>',
-            width: '520px',
-            showCancelButton: true,
-            confirmButtonText: '<i class="fa-solid fa-save"></i> Ya, Simpan',
-            cancelButtonText: '<i class="fa-solid fa-xmark"></i> Batal',
-            reverseButtons: true,
-            background: '#ffffff',
-            buttonsStyling: false,
-            customClass: {
-                popup: 'swal-modern',
-                confirmButton: 'swal-confirm',
-                cancelButton: 'swal-cancel'
-            }
-        }).then(function (result) {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: url,
-                    type: method,
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    data: dataForm,
-                    success: function (response) {
-                        resetForm();
-                        showTable();
-                        loadSiswa();
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    message = Object.values(xhr.responseJSON.errors).flat().join('\n');
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
 
-                        showSuccessPopup(
-                            'Berhasil!',
-                            response.message || 'Data siswa berhasil disimpan.'
-                        );
-                    },
-                    error: function (xhr) {
-                        var message = 'Data siswa gagal disimpan. Periksa kembali form.';
-
-                        if (xhr.responseJSON && xhr.responseJSON.errors) {
-                            message = Object.values(xhr.responseJSON.errors).flat().join('<br>');
-                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                            message = xhr.responseJSON.message;
-                        }
-
-                        showErrorPopup('Gagal!', message);
-                    }
-                });
+                alert(message);
             }
         });
     });
@@ -398,9 +295,7 @@ $(document).ready(function () {
         $.ajax({
             url: apiUrl + '/' + id,
             type: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            },
+            headers: { 'Accept': 'application/json' },
             success: function (response) {
                 var siswa = response.data;
 
@@ -423,7 +318,7 @@ $(document).ready(function () {
                 showDetail();
             },
             error: function () {
-                showErrorPopup('Gagal!', 'Detail siswa gagal dimuat.');
+                alert('Detail siswa gagal dimuat.');
             }
         });
     });
@@ -438,9 +333,7 @@ $(document).ready(function () {
         $.ajax({
             url: apiUrl + '/' + id,
             type: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            },
+            headers: { 'Accept': 'application/json' },
             success: function (response) {
                 var siswa = response.data;
 
@@ -459,7 +352,7 @@ $(document).ready(function () {
                 showForm();
             },
             error: function () {
-                showErrorPopup('Gagal!', 'Data siswa gagal dimuat.');
+                alert('Data siswa gagal dimuat.');
             }
         });
     });
@@ -467,43 +360,20 @@ $(document).ready(function () {
     $(document).on('click', '.btnHapus', function () {
         var id = $(this).data('id');
 
-        Swal.fire({
-            title: 'Hapus Data Siswa?',
-            html: '<p style="color:#64748b; font-size:15px;">Data siswa yang dihapus tidak dapat dikembalikan.</p>',
-            width: '520px',
-            showCancelButton: true,
-            confirmButtonText: '<i class="fa-solid fa-trash"></i> Ya, Hapus',
-            cancelButtonText: '<i class="fa-solid fa-xmark"></i> Batal',
-            reverseButtons: true,
-            background: '#ffffff',
-            buttonsStyling: false,
-            customClass: {
-                popup: 'swal-modern',
-                confirmButton: 'swal-danger',
-                cancelButton: 'swal-cancel'
-            }
-        }).then(function (result) {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: apiUrl + '/' + id,
-                    type: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json'
-                    },
-                    success: function (response) {
-                        loadSiswa();
-
-                        showSuccessPopup(
-                            'Berhasil Dihapus!',
-                            response.message || 'Data siswa berhasil dihapus.'
-                        );
-                    },
-                    error: function () {
-                        showErrorPopup('Gagal!', 'Data siswa gagal dihapus.');
-                    }
-                });
-            }
-        });
+        if (confirm('Yakin ingin menghapus data siswa ini?')) {
+            $.ajax({
+                url: apiUrl + '/' + id,
+                type: 'DELETE',
+                headers: { 'Accept': 'application/json' },
+                success: function (response) {
+                    alert(response.message || 'Data siswa berhasil dihapus.');
+                    loadSiswa();
+                },
+                error: function () {
+                    alert('Data siswa gagal dihapus.');
+                }
+            });
+        }
     });
 
     $('#searchInput').on('keyup', function () {
