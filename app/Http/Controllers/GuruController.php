@@ -7,101 +7,45 @@ use Illuminate\Http\Request;
 
 class GuruController extends Controller
 {
-    // GET ALL DATA
     public function index()
     {
-        $guru = Guru::all();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data guru berhasil diambil',
-            'data' => $guru
-        ]);
+        $gurus = Guru::all();
+        return view('guru.index', compact('gurus'));
     }
 
-    // STORE DATA
+    public function create()
+    {
+        return view('guru.create');
+    }
+
     public function store(Request $request)
     {
-        $guru = Guru::create([
-            'nama' => $request->nama,
-            'nip' => $request->nip,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
-            'mapel' => $request->mapel,
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data guru berhasil ditambahkan',
-            'data' => $guru
-        ]);
+        Guru::create($request->all());
+        return redirect()->route('guru.index');
     }
 
-    // SHOW DETAIL
     public function show($id)
     {
-        $guru = Guru::find($id);
-
-        if (!$guru) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Data guru tidak ditemukan'
-            ], 404);
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Detail data guru',
-            'data' => $guru
-        ]);
+        $guru = Guru::findOrFail($id);
+        return view('guru.show', compact('guru'));
     }
 
-    // UPDATE DATA
+    public function edit($id)
+    {
+        $guru = Guru::findOrFail($id);
+        return view('guru.edit', compact('guru'));
+    }
+
     public function update(Request $request, $id)
     {
-        $guru = Guru::find($id);
-
-        if (!$guru) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Data guru tidak ditemukan'
-            ], 404);
-        }
-
-        $guru->update([
-            'nama' => $request->nama,
-            'nip' => $request->nip,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
-            'mapel' => $request->mapel,
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data guru berhasil diupdate',
-            'data' => $guru
-        ]);
+        $guru = Guru::findOrFail($id);
+        $guru->update($request->all());
+        return redirect()->route('guru.index');
     }
 
-    // DELETE DATA
     public function destroy($id)
     {
-        $guru = Guru::find($id);
-
-        if (!$guru) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Data guru tidak ditemukan'
-            ], 404);
-        }
-
-        $guru->delete();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data guru berhasil dihapus'
-        ]);
+        Guru::findOrFail($id)->delete();
+        return redirect()->route('guru.index');
     }
 }
