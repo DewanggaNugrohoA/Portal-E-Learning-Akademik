@@ -42,6 +42,24 @@ Route::get('/materi', function () {
     return view('materi.index');
 });
 
-Route::get('/nilai', function () {
-    return view('nilai.index');
-});
+/*
+|--------------------------------------------------------------------------
+| Modul Mata Pelajaran - Meida Dinafani
+| Halaman Blade, proses CRUD lewat API /api/mata-pelajaran
+|--------------------------------------------------------------------------
+*/
+Route::get('/mata-pelajaran', function () {
+    return view('mata-pelajaran.index');
+})->name('mata-pelajaran.index');
+
+Route::get('/mata-pelajaran/create', function () {
+    return view('mata-pelajaran.create');
+})->name('mata-pelajaran.create');
+
+Route::get('/mata-pelajaran/{id}/edit', function ($id) {
+    return view('mata-pelajaran.edit', compact('id'));
+})->name('mata-pelajaran.edit');
+
+Route::get('/mata-pelajaran/{id}', function ($id) {
+    return view('mata-pelajaran.show', compact('id'));
+})->name('mata-pelajaran.show');
