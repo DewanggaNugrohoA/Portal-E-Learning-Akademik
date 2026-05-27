@@ -7,7 +7,24 @@
     <div class="container">
         <div class="header">
             <h1>Data Materi Pembelajaran</h1>
-            <p>Data materi ditampilkan menggunakan API dari endpoint <b>/api/materi</b>.</p>
+            <p>Data materi ditampilkan menggunakan API dari endpoint /api/materi.</p>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <span>Total Materi</span>
+                <h2 id="totalMateri">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Modul</span>
+                <h2>Materi</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Penanggung Jawab</span>
+                <h2>Dewangga</h2>
+            </div>
         </div>
 
         <div class="panel">
@@ -15,7 +32,7 @@
                 <div>
                     <h2 style="margin:0;">Daftar Materi</h2>
                     <p style="margin:6px 0 0; color:#64748b;">
-                        Modul Materi - Dewangga Nugroho Anwar
+                        Kelola data materi, mata pelajaran, guru, dan file pembelajaran.
                     </p>
                 </div>
 
@@ -34,13 +51,14 @@
                             <th>Mata Pelajaran</th>
                             <th>Guru</th>
                             <th>File</th>
+                            <th>Tanggal Dibuat</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody id="materiTable">
                         <tr>
-                            <td colspan="6" class="empty">Memuat data materi...</td>
+                            <td colspan="7" class="empty">Memuat data materi...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -53,6 +71,7 @@
 @section('scripts')
 <script>
     const materiTable = document.getElementById('materiTable');
+    const totalMateri = document.getElementById('totalMateri');
 
     async function loadMateri() {
         try {
@@ -63,21 +82,27 @@
             });
 
             const result = await response.json();
+            const data = result.data ?? [];
 
             materiTable.innerHTML = '';
+            totalMateri.textContent = data.length;
 
-            if (!result.data || result.data.length === 0) {
+            if (data.length === 0) {
                 materiTable.innerHTML = `
                     <tr>
-                        <td colspan="6" class="empty">Belum ada data materi.</td>
+                        <td colspan="7" class="empty">Belum ada data materi.</td>
                     </tr>
                 `;
                 return;
             }
 
-            result.data.forEach((materi, index) => {
+            data.forEach((materi, index) => {
                 const deskripsi = materi.deskripsi
-                    ? materi.deskripsi.substring(0, 80)
+                    ? materi.deskripsi.substring(0, 70)
+                    : '-';
+
+                const tanggal = materi.created_at
+                    ? new Date(materi.created_at).toLocaleString('id-ID')
                     : '-';
 
                 const fileMateri = materi.file_materi
@@ -108,6 +133,8 @@
 
                         <td>${fileMateri}</td>
 
+                        <td>${tanggal}</td>
+
                         <td>
                             <div class="action-group">
                                 <a href="/materi/${materi.id}" class="btn btn-detail">
@@ -129,7 +156,7 @@
         } catch (error) {
             materiTable.innerHTML = `
                 <tr>
-                    <td colspan="6" class="empty">Gagal memuat data materi.</td>
+                    <td colspan="7" class="empty">Gagal memuat data materi.</td>
                 </tr>
             `;
         }
