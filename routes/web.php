@@ -2,12 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MateriController;
+use App\Http\Controllers\GuruController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/guru');
 });
 
 Route::resource('/materi', MateriController::class);
+
+Route::resource('/guru', GuruController::class);
 
 Route::get('/siswa', function () {
     return view('siswa.index');

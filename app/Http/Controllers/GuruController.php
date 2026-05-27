@@ -9,53 +9,44 @@ class GuruController extends Controller
 {
     public function index()
     {
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data guru berhasil diambil',
-            'data' => Guru::all()
-        ]);
+        $gurus = Guru::all();
+        return view('guru.index', compact('gurus'));
+    }
+
+    public function create()
+    {
+        return view('guru.create');
     }
 
     public function store(Request $request)
     {
-        $guru = Guru::create($request->all());
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data guru berhasil ditambahkan',
-            'data' => $guru
-        ], 201);
+        Guru::create($request->all());
+        return redirect()->route('guru.index');
     }
 
-    public function show(string $id)
+    public function show($id)
     {
         $guru = Guru::findOrFail($id);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $guru
-        ]);
+        return view('guru.show', compact('guru'));
     }
 
-    public function update(Request $request, string $id)
+    public function edit($id)
+    {
+        $guru = Guru::findOrFail($id);
+        return view('guru.edit', compact('guru'));
+    }
+
+    public function update(Request $request, $id)
     {
         $guru = Guru::findOrFail($id);
         $guru->update($request->all());
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data guru berhasil diupdate',
-            'data' => $guru
-        ]);
+        return redirect()->route('guru.index');
     }
 
-    public function destroy(string $id)
+    public function destroy($id)
     {
         Guru::findOrFail($id)->delete();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data guru berhasil dihapus'
-        ]);
+        return redirect()->route('guru.index');
     }
 }
