@@ -27,3 +27,5 @@ Route::get('/siswa/{id}', function ($id) {
 Route::get('/siswa/{id}/edit', function ($id) {
     return view('siswa.edit', compact('id'));
 })->name('siswa.edit');
+
+Route::resource('/guru', GuruController::class);
