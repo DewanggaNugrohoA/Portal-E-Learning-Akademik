@@ -5,14 +5,18 @@
 @section('content')
 <div class="page">
     <div class="container">
+
         <div class="header">
             <h1>Detail Data Siswa</h1>
             <p>Informasi lengkap siswa pada Portal E-Learning Akademik.</p>
         </div>
 
         <div id="detailArea">
-            <div class="loading-box">Memuat detail siswa...</div>
+            <div class="loading-box">
+                Memuat detail siswa...
+            </div>
         </div>
+
     </div>
 </div>
 @endsection
@@ -20,6 +24,7 @@
 @section('scripts')
 <script>
 $(document).ready(function () {
+
     var id = getIdFromUrl();
     var apiUrl = '/api/siswa';
 
@@ -32,6 +37,7 @@ $(document).ready(function () {
     }
 
     function safeHtml(value) {
+
         if (value === null || value === undefined || value === '') {
             return '-';
         }
@@ -45,6 +51,7 @@ $(document).ready(function () {
     }
 
     function getInitial(name) {
+
         if (name && name.length > 0) {
             return safeHtml(name.charAt(0).toUpperCase());
         }
@@ -53,6 +60,7 @@ $(document).ready(function () {
     }
 
     function formatTanggal(value) {
+
         if (!value) {
             return '-';
         }
@@ -68,46 +76,75 @@ $(document).ready(function () {
     }
 
     function statusBadge(status) {
+
         if (status === 'Aktif') {
-            return '<span class="badge badge-green">Aktif</span>';
+            return '<span class="badge badge-blue">Aktif</span>';
         }
 
         return '<span class="badge badge-red">Tidak Aktif</span>';
     }
 
     function loadDetailSiswa() {
+
         $.ajax({
             url: apiUrl + '/' + id,
             type: 'GET',
             headers: {
                 'Accept': 'application/json'
             },
+
             success: function (response) {
+
                 var siswa = response.data;
 
                 $('#detailArea').html(
+
                     '<div class="profile-card">' +
+
                         '<div class="profile-top">' +
-                            '<div class="detail-avatar">' + getInitial(siswa.nama) + '</div>' +
+
+                            '<div class="detail-avatar">' +
+                                getInitial(siswa.nama) +
+                            '</div>' +
 
                             '<div class="profile-info">' +
-                                '<h2>' + safeHtml(siswa.nama) + '</h2>' +
-                                '<p>' + safeHtml(siswa.email) + '</p>' +
+
+                                '<h2>' +
+                                    safeHtml(siswa.nama) +
+                                '</h2>' +
+
+                                '<p>' +
+                                    safeHtml(siswa.email) +
+                                '</p>' +
 
                                 '<div class="badge-row">' +
-                                    '<span class="badge badge-blue">NIS: ' + safeHtml(siswa.nis) + '</span>' +
-                                    '<span class="badge badge-blue">Kelas: ' + safeHtml(siswa.kelas) + '</span>' +
+
+                                    '<span class="badge badge-blue">' +
+                                        'NIS: ' + safeHtml(siswa.nis) +
+                                    '</span>' +
+
+                                    '<span class="badge badge-blue">' +
+                                        'Kelas: ' + safeHtml(siswa.kelas) +
+                                    '</span>' +
+
                                     statusBadge(siswa.status) +
+
                                 '</div>' +
+
                             '</div>' +
+
                         '</div>' +
+
                     '</div>' +
 
                     '<div class="content-grid">' +
+
                         '<div class="section">' +
+
                             '<h3>Informasi Utama</h3>' +
 
                             '<div class="data-grid">' +
+
                                 '<div class="data-item">' +
                                     '<div class="label">NIS</div>' +
                                     '<div class="value">' + safeHtml(siswa.nis) + '</div>' +
@@ -152,13 +189,17 @@ $(document).ready(function () {
                                     '<div class="label">Alamat</div>' +
                                     '<div class="value">' + safeHtml(siswa.alamat) + '</div>' +
                                 '</div>' +
+
                             '</div>' +
+
                         '</div>' +
 
                         '<div class="section">' +
+
                             '<h3>Ringkasan Data</h3>' +
 
                             '<div class="summary-list">' +
+
                                 '<div class="summary-item">' +
                                     '<span>Status Siswa</span>' +
                                     '<strong>' + safeHtml(siswa.status) + '</strong>' +
@@ -178,28 +219,44 @@ $(document).ready(function () {
                                     '<span>Terakhir Diperbarui</span>' +
                                     '<strong>' + formatTanggal(siswa.updated_at) + '</strong>' +
                                 '</div>' +
+
                             '</div>' +
+
                         '</div>' +
+
                     '</div>' +
 
                     '<div class="actions">' +
-                        '<a href="/siswa" class="btn btn-primary">← Kembali ke Data Siswa</a>' +
+
+                        '<a href="/siswa" class="btn btn-secondary">' +
+                            '<i class="fa-solid fa-arrow-left"></i> Kembali' +
+                        '</a>' +
+
+                        '<a href="/siswa/' + siswa.id + '/edit" class="btn btn-primary">' +
+                            '<i class="fa-solid fa-pen"></i> Edit Siswa' +
+                        '</a>' +
+
                     '</div>'
                 );
+
             },
+
             error: function () {
+
                 Swal.fire({
                     title: 'Data Tidak Ditemukan',
                     text: 'Data siswa yang kamu buka tidak tersedia.',
                     icon: 'error',
-                    confirmButtonText: 'Kembali',
                     confirmButtonColor: '#1E3A8A'
                 }).then(function () {
                     window.location.href = '/siswa';
                 });
+
             }
         });
+
     }
+
 });
 </script>
 @endsection

@@ -5,23 +5,29 @@
 @section('content')
 <div class="page">
     <div class="container-small">
+
         <div class="header">
             <h1>Edit Data Siswa</h1>
-            <p>Perbarui data siswa yang sudah tersimpan pada sistem.</p>
+            <p>Form edit data siswa menggunakan REST API Laravel.</p>
         </div>
 
         <div class="card">
-            <div class="info-box" id="statusBox">Memuat data siswa...</div>
+
+            <div class="info-box" id="statusBox">
+                Memuat data siswa...
+            </div>
 
             <form id="formEdit">
+
                 <div class="form-grid">
+
                     <div class="form-group">
                         <label for="nis">NIS</label>
                         <input type="text" id="nis" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="nama">Nama Lengkap</label>
+                        <label for="nama">Nama Siswa</label>
                         <input type="text" id="nama" required>
                     </div>
 
@@ -64,16 +70,28 @@
 
                     <div class="form-group full">
                         <label for="alamat">Alamat</label>
-                        <textarea id="alamat"></textarea>
+                        <textarea id="alamat" rows="4"></textarea>
                     </div>
+
                 </div>
 
                 <div class="actions">
-                    <a href="/siswa" class="btn btn-secondary">Kembali</a>
-                    <button type="submit" class="btn btn-primary" id="btnUpdate">Update Data</button>
+
+                    <a href="/siswa" class="btn btn-secondary">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Kembali
+                    </a>
+
+                    <button type="submit" class="btn btn-primary" id="btnUpdate">
+                        <i class="fa-solid fa-save"></i>
+                        Update Siswa
+                    </button>
+
                 </div>
+
             </form>
         </div>
+
     </div>
 </div>
 @endsection
@@ -81,6 +99,7 @@
 @section('scripts')
 <script>
 $(document).ready(function () {
+
     var id = getIdFromUrl();
     var apiUrl = '/api/siswa';
 
@@ -93,13 +112,16 @@ $(document).ready(function () {
     }
 
     function loadData() {
+
         $.ajax({
             url: apiUrl + '/' + id,
             type: 'GET',
             headers: {
                 'Accept': 'application/json'
             },
+
             success: function (response) {
+
                 var siswa = response.data;
 
                 $('#nis').val(siswa.nis);
@@ -112,23 +134,29 @@ $(document).ready(function () {
                 $('#alamat').val(siswa.alamat);
                 $('#status').val(siswa.status);
 
-                $('#statusBox').text('Data berhasil dimuat. Silakan lakukan perubahan.');
+                $('#statusBox').text(
+                    'Data berhasil dimuat. Silakan lakukan perubahan.'
+                );
             },
+
             error: function () {
+
                 Swal.fire({
                     title: 'Data Tidak Ditemukan',
                     text: 'Data siswa yang kamu buka tidak tersedia.',
                     icon: 'error',
-                    confirmButtonText: 'Kembali',
                     confirmButtonColor: '#1E3A8A'
                 }).then(function () {
                     window.location.href = '/siswa';
                 });
+
             }
         });
+
     }
 
     $('#formEdit').submit(function (e) {
+
         e.preventDefault();
 
         var formData = {
@@ -143,7 +171,10 @@ $(document).ready(function () {
             status: $('#status').val()
         };
 
-        $('#btnUpdate').prop('disabled', true).text('Mengupdate...');
+        $('#btnUpdate').prop('disabled', true).html(`
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Mengupdate...
+        `);
 
         $.ajax({
             url: apiUrl + '/' + id,
@@ -153,52 +184,69 @@ $(document).ready(function () {
             headers: {
                 'Accept': 'application/json'
             },
+
             success: function (response) {
+
                 Swal.fire({
                     title: 'Berhasil!',
                     text: response.message || 'Data siswa berhasil diperbarui.',
                     icon: 'success',
-                    confirmButtonText: 'Oke',
                     confirmButtonColor: '#1E3A8A'
                 }).then(function () {
                     window.location.href = '/siswa';
                 });
+
             },
+
             error: function (xhr) {
+
                 Swal.fire({
                     title: 'Gagal!',
                     text: getErrorMessage(xhr, 'Data siswa gagal diperbarui.'),
                     icon: 'error',
-                    confirmButtonText: 'Coba Lagi',
                     confirmButtonColor: '#B91C1C'
                 });
 
-                $('#btnUpdate').prop('disabled', false).text('Update Data');
+                $('#btnUpdate').prop('disabled', false).html(`
+                    <i class="fa-solid fa-save"></i>
+                    Update Siswa
+                `);
+
             }
         });
+
     });
 
     function getErrorMessage(xhr, defaultMessage) {
+
         var pesan = defaultMessage;
 
         if (xhr.responseJSON) {
+
             if (xhr.responseJSON.errors) {
+
                 var list = [];
 
                 $.each(xhr.responseJSON.errors, function (key, values) {
+
                     $.each(values, function (index, value) {
                         list.push(value);
                     });
+
                 });
 
                 pesan = list.join('\n');
+
             } else if (xhr.responseJSON.message) {
+
                 pesan = xhr.responseJSON.message;
+
             }
         }
 
         return pesan;
     }
+
 });
 </script>
 @endsection

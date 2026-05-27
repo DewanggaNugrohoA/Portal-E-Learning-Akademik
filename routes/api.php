@@ -11,7 +11,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
+Route::apiResource('siswa', SiswaController::class)->names('api.siswa');
 Route::apiResource('guru', GuruController::class);
 Route::apiResource('materi', MateriController::class)->names('api.materi');
 Route::apiResource('nilai', NilaiController::class);
