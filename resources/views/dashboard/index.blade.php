@@ -71,7 +71,7 @@
             </div>
 
             <div class="module-grid">
-                <a href="#" class="module-card menu-link" data-url="/siswa" data-module="siswa">
+                <a href="{{ url('/siswa') }}" class="module-card">
                     <div class="module-icon">
                         <i class="fa-solid fa-user-graduate"></i>
                     </div>
@@ -84,7 +84,7 @@
                     <i class="fa-solid fa-arrow-right module-arrow"></i>
                 </a>
 
-                <a href="#" class="module-card menu-link" data-url="/guru" data-module="guru">
+                <a href="{{ url('/guru') }}" class="module-card">
                     <div class="module-icon">
                         <i class="fa-solid fa-chalkboard-user"></i>
                     </div>
@@ -97,7 +97,7 @@
                     <i class="fa-solid fa-arrow-right module-arrow"></i>
                 </a>
 
-                <a href="#" class="module-card menu-link" data-url="/mata-pelajaran" data-module="mata-pelajaran">
+                <a href="{{ url('/mata-pelajaran') }}" class="module-card">
                     <div class="module-icon">
                         <i class="fa-solid fa-book-open"></i>
                     </div>
@@ -110,7 +110,7 @@
                     <i class="fa-solid fa-arrow-right module-arrow"></i>
                 </a>
 
-                <a href="#" class="module-card active-module menu-link" data-url="/materi" data-module="materi">
+                <a href="{{ url('/materi') }}" class="module-card active-module">
                     <div class="module-icon">
                         <i class="fa-solid fa-book"></i>
                     </div>
@@ -123,7 +123,7 @@
                     <i class="fa-solid fa-arrow-right module-arrow"></i>
                 </a>
 
-                <a href="#" class="module-card menu-link" data-url="/nilai" data-module="nilai">
+                <a href="{{ url('/nilai') }}" class="module-card">
                     <div class="module-icon">
                         <i class="fa-solid fa-chart-line"></i>
                     </div>
@@ -302,7 +302,6 @@
         align-items: center;
         gap: 16px;
         color: #111827;
-        text-decoration: none;
         transition: 0.2s ease;
         position: relative;
         overflow: hidden;

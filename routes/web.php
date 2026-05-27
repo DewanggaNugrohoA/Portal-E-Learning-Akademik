@@ -6,14 +6,9 @@ Route::get('/', function () {
     return view('dashboard.index');
 })->name('dashboard');
 
-Route::get('/dashboard', function () {
-    return redirect('/');
-});
-
 /*
 |--------------------------------------------------------------------------
 | Modul Siswa - Sevi Rina Pertiwi
-| Halaman Blade, proses CRUD lewat API /api/siswa
 |--------------------------------------------------------------------------
 */
 Route::get('/siswa', function () {
@@ -35,13 +30,42 @@ Route::get('/siswa/{id}/edit', function ($id) {
 /*
 |--------------------------------------------------------------------------
 | Modul Materi - Dewangga Nugroho Anwar
-| Halaman Blade, proses CRUD lewat API /api/materi
 |--------------------------------------------------------------------------
 */
 Route::get('/materi', function () {
     return view('materi.index');
-});
+})->name('materi.index');
 
+Route::get('/materi/create', function () {
+    return view('materi.create');
+})->name('materi.create');
+
+Route::get('/materi/{id}', function ($id) {
+    return view('materi.show', compact('id'));
+})->name('materi.show');
+
+Route::get('/materi/{id}/edit', function ($id) {
+    return view('materi.edit', compact('id'));
+})->name('materi.edit');
+
+/*
+|--------------------------------------------------------------------------
+| Modul Nilai - Karina Hodiyah Ramadona
+| Halaman Blade, proses CRUD lewat API /api/nilai
+|--------------------------------------------------------------------------
+*/
 Route::get('/nilai', function () {
     return view('nilai.index');
-});
+})->name('nilai.index');
+
+Route::get('/nilai/create', function () {
+    return view('nilai.create');
+})->name('nilai.create');
+
+Route::get('/nilai/{id}', function ($id) {
+    return view('nilai.show', compact('id'));
+})->name('nilai.show');
+
+Route::get('/nilai/{id}/edit', function ($id) {
+    return view('nilai.edit', compact('id'));
+})->name('nilai.edit');

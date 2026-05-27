@@ -1,21 +1,50 @@
+@extends('layouts.app')
+
+@section('title', 'Data Nilai')
+
+@section('content')
 <div class="page">
     <div class="container">
         <div class="header">
-            <h1>Manajemen Data Nilai</h1>
-            <p>Kelola KKM dan deskripsi predikat nilai secara otomatis.</p>
+            <h1>Data Nilai</h1>
+            <p>Data nilai ditampilkan menggunakan API dari endpoint /api/nilai.</p>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <span>Total Nilai</span>
+                <h2 id="totalNilai">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Modul</span>
+                <h2>Nilai</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Penanggung Jawab</span>
+                <h2>Karina</h2>
+            </div>
         </div>
 
         <div class="panel">
             <div id="tableSection">
                 <div class="toolbar">
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Cari guru, KKM, atau predikat...">
+                    <div>
+                        <h2 style="margin:0;">Daftar Nilai</h2>
+                        <p style="margin:6px 0 0; color:#64748b;">
+                            Kelola data nilai menggunakan API.
+                        </p>
                     </div>
 
                     <button type="button" class="btn btn-primary" id="btnTambah">
                         <i class="fa-solid fa-plus"></i>
                         Tambah Nilai
                     </button>
+                </div>
+
+                <div style="margin-bottom:18px;">
+                    <input type="text" id="searchInput" placeholder="Cari guru, KKM, atau predikat...">
                 </div>
 
                 <div class="table-wrapper">
@@ -33,7 +62,7 @@
                             </tr>
                         </thead>
 
-                        <tbody id="dataNilai">
+                        <tbody id="nilaiTable">
                             <tr>
                                 <td colspan="8" class="empty">Memuat data nilai...</td>
                             </tr>
@@ -43,29 +72,59 @@
             </div>
 
             <div id="formSection" style="display:none;">
-                <h3 id="formTitle">Tambah Nilai</h3>
+                <div class="toolbar">
+                    <div>
+                        <h2 id="formTitle" style="margin:0;">Tambah Nilai</h2>
+                        <p style="margin:6px 0 0; color:#64748b;">
+                            Form ini diproses menggunakan AJAX tanpa reload halaman.
+                        </p>
+                    </div>
+                </div>
 
                 <form id="formNilai">
                     <input type="hidden" id="nilai_id">
 
-                    <label>Guru</label>
-                    <select id="guru_id" required></select>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Guru</label>
+                            <select id="guru_id" required>
+                                <option value="">-- Pilih Guru --</option>
+                            </select>
+                        </div>
 
-                    <label>KKM</label>
-                    <input type="number" id="kkm" min="0" max="100" required>
+                        <div class="form-group">
+                            <label>KKM</label>
+                            <input type="number" id="kkm" min="0" max="100" required>
+                        </div>
 
-                    <div style="margin-top:16px; padding:14px; border-radius:14px; background:#eff6ff; color:#1e3a8a;">
-                        Deskripsi predikat akan otomatis tersimpan:
-                        <br>A = Sangat Baik, B = Baik, C = Cukup, D = Kurang
+                        <div class="form-group full">
+                            <label>Deskripsi Predikat A</label>
+                            <textarea id="deskripsi_a" required></textarea>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Deskripsi Predikat B</label>
+                            <textarea id="deskripsi_b" required></textarea>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Deskripsi Predikat C</label>
+                            <textarea id="deskripsi_c" required></textarea>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Deskripsi Predikat D</label>
+                            <textarea id="deskripsi_d" required></textarea>
+                        </div>
                     </div>
 
-                    <br>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-save"></i>
-                        Simpan
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="btnBatal">Batal</button>
+                    <div class="actions">
+                        <button type="button" class="btn btn-secondary" id="btnBatal">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="btnSimpan">
+                            <i class="fa-solid fa-save"></i>
+                            Simpan
+                        </button>
+                    </div>
                 </form>
             </div>
 
@@ -73,56 +132,9 @@
         </div>
     </div>
 </div>
+@endsection
 
-<style>
-.swal-modern {
-    border-radius: 28px !important;
-    padding: 28px !important;
-}
-
-.swal-confirm {
-    background: #1e3a8a !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 22px !important;
-    font-weight: 700 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    box-shadow: 0 10px 25px rgba(30, 58, 138, 0.25);
-}
-
-.swal-danger {
-    background: #dc2626 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 22px !important;
-    font-weight: 700 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.25);
-}
-
-.swal-cancel {
-    background: #f1f5f9 !important;
-    color: #334155 !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 22px !important;
-    font-weight: 700 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-}
-
-.swal2-actions {
-    gap: 12px !important;
-}
-</style>
-
+@section('scripts')
 <script>
 $(document).ready(function () {
     var apiUrl = '/api/nilai';
@@ -135,22 +147,29 @@ $(document).ready(function () {
         $.ajax({
             url: apiUrl,
             type: 'GET',
-            headers: { 'Accept': 'application/json' },
+            headers: {
+                'Accept': 'application/json'
+            },
             success: function (response) {
                 nilaiList = response.data || [];
+                $('#totalNilai').text(nilaiList.length);
                 renderTable(nilaiList);
             },
             error: function () {
-                $('#dataNilai').html('<tr><td colspan="8" class="empty" style="color:#dc2626;">Gagal memuat data nilai.</td></tr>');
+                $('#nilaiTable').html(
+                    '<tr><td colspan="8" class="empty">Gagal memuat data nilai.</td></tr>'
+                );
             }
         });
     }
 
-    function loadGuru(selectedId = '') {
+    function loadGuru(selectedId) {
         $.ajax({
             url: guruUrl,
             type: 'GET',
-            headers: { 'Accept': 'application/json' },
+            headers: {
+                'Accept': 'application/json'
+            },
             success: function (response) {
                 var options = '<option value="">-- Pilih Guru --</option>';
 
@@ -162,69 +181,8 @@ $(document).ready(function () {
                 $('#guru_id').html(options);
             },
             error: function () {
-                showErrorPopup('Gagal Memuat Guru', 'Data guru gagal dimuat. Pastikan API guru aktif.');
+                showError('Gagal memuat data guru.');
             }
-        });
-    }
-
-    function safeHtml(value) {
-        if (value === null || value === undefined || value === '') return '-';
-
-        return String(value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    }
-
-    function getGuruName(nilai) {
-        return nilai.guru && nilai.guru.nama ? nilai.guru.nama : '-';
-    }
-
-    function showSuccessPopup(title, message) {
-        Swal.fire({
-            title: title,
-            html: `
-                <p style="color:#64748b; margin:0; font-size:15px; line-height:1.6;">
-                    ${message}
-                </p>
-            `,
-            icon: 'success',
-            width: '480px',
-            background: '#ffffff',
-            buttonsStyling: false,
-            customClass: {
-                popup: 'swal-modern',
-                confirmButton: 'swal-confirm'
-            },
-            confirmButtonText: `
-                <i class="fa-solid fa-check"></i>
-                Oke
-            `
-        });
-    }
-
-    function showErrorPopup(title, message) {
-        Swal.fire({
-            title: title,
-            html: `
-                <p style="color:#64748b; margin:0; font-size:15px; line-height:1.6;">
-                    ${message}
-                </p>
-            `,
-            icon: 'error',
-            width: '480px',
-            background: '#ffffff',
-            buttonsStyling: false,
-            customClass: {
-                popup: 'swal-modern',
-                confirmButton: 'swal-danger'
-            },
-            confirmButtonText: `
-                <i class="fa-solid fa-xmark"></i>
-                Tutup
-            `
         });
     }
 
@@ -238,7 +196,7 @@ $(document).ready(function () {
                 rows +=
                     '<tr>' +
                         '<td>' + (index + 1) + '</td>' +
-                        '<td>' + safeHtml(getGuruName(nilai)) + '</td>' +
+                        '<td><strong>' + safeHtml(getGuruName(nilai)) + '</strong></td>' +
                         '<td><span class="badge badge-blue">' + safeHtml(nilai.kkm) + '</span></td>' +
                         '<td>' + safeHtml(nilai.deskripsi_a) + '</td>' +
                         '<td>' + safeHtml(nilai.deskripsi_b) + '</td>' +
@@ -246,13 +204,15 @@ $(document).ready(function () {
                         '<td>' + safeHtml(nilai.deskripsi_d) + '</td>' +
                         '<td>' +
                             '<div class="action-group">' +
-                                '<button type="button" class="btn btn-detail btn-icon btnDetail" data-id="' + nilai.id + '">' +
+                                '<button type="button" class="btn btn-detail btnDetail" data-id="' + nilai.id + '">' +
                                     '<i class="fa-solid fa-eye"></i>' +
                                 '</button>' +
-                                '<button type="button" class="btn btn-edit btn-icon btnEdit" data-id="' + nilai.id + '">' +
-                                    '<i class="fa-solid fa-pen-to-square"></i>' +
+
+                                '<button type="button" class="btn btn-edit btnEdit" data-id="' + nilai.id + '">' +
+                                    '<i class="fa-solid fa-pen"></i>' +
                                 '</button>' +
-                                '<button type="button" class="btn btn-delete btn-icon btnHapus" data-id="' + nilai.id + '">' +
+
+                                '<button type="button" class="btn btn-delete btnHapus" data-id="' + nilai.id + '">' +
                                     '<i class="fa-solid fa-trash"></i>' +
                                 '</button>' +
                             '</div>' +
@@ -261,8 +221,227 @@ $(document).ready(function () {
             });
         }
 
-        $('#dataNilai').html(rows);
+        $('#nilaiTable').html(rows);
     }
+
+    $('#btnTambah').on('click', function () {
+        $('#formTitle').text('Tambah Nilai');
+        $('#nilai_id').val('');
+        $('#formNilai')[0].reset();
+        loadGuru('');
+        showForm();
+    });
+
+    $('#btnBatal').on('click', function () {
+        showTable();
+    });
+
+    $('#formNilai').on('submit', function (e) {
+        e.preventDefault();
+
+        var id = $('#nilai_id').val();
+        var method = id ? 'PUT' : 'POST';
+        var url = id ? apiUrl + '/' + id : apiUrl;
+
+        $('#btnSimpan').prop('disabled', true).text('Menyimpan...');
+
+        $.ajax({
+            url: url,
+            type: method,
+            headers: {
+                'Accept': 'application/json'
+            },
+            data: {
+                guru_id: $('#guru_id').val(),
+                kkm: $('#kkm').val(),
+                deskripsi_a: $('#deskripsi_a').val(),
+                deskripsi_b: $('#deskripsi_b').val(),
+                deskripsi_c: $('#deskripsi_c').val(),
+                deskripsi_d: $('#deskripsi_d').val()
+            },
+            success: function (response) {
+                $('#btnSimpan').prop('disabled', false).html('<i class="fa-solid fa-save"></i> Simpan');
+                $('#formNilai')[0].reset();
+
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: response.message || 'Data nilai berhasil disimpan.',
+                    icon: 'success',
+                    confirmButtonColor: '#1e3a8a'
+                });
+
+                showTable();
+                loadNilai();
+            },
+            error: function (xhr) {
+                $('#btnSimpan').prop('disabled', false).html('<i class="fa-solid fa-save"></i> Simpan');
+
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: getErrorMessage(xhr, 'Data nilai gagal disimpan.'),
+                    icon: 'error',
+                    confirmButtonColor: '#b91c1c'
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.btnDetail', function () {
+        var id = $(this).data('id');
+
+        $.ajax({
+            url: apiUrl + '/' + id,
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                var nilai = response.data;
+
+                $('#detailSection').html(
+                    '<div class="toolbar">' +
+                        '<div>' +
+                            '<h2 style="margin:0;">Detail Nilai</h2>' +
+                            '<p style="margin:6px 0 0; color:#64748b;">Detail data nilai dari API.</p>' +
+                        '</div>' +
+                    '</div>' +
+
+                    '<div class="data-grid">' +
+                        '<div class="data-item">' +
+                            '<div class="label">Nama Guru</div>' +
+                            '<div class="value">' + safeHtml(getGuruName(nilai)) + '</div>' +
+                        '</div>' +
+
+                        '<div class="data-item">' +
+                            '<div class="label">KKM</div>' +
+                            '<div class="value">' + safeHtml(nilai.kkm) + '</div>' +
+                        '</div>' +
+
+                        '<div class="data-item full">' +
+                            '<div class="label">Deskripsi Predikat A</div>' +
+                            '<div class="value">' + safeHtml(nilai.deskripsi_a) + '</div>' +
+                        '</div>' +
+
+                        '<div class="data-item full">' +
+                            '<div class="label">Deskripsi Predikat B</div>' +
+                            '<div class="value">' + safeHtml(nilai.deskripsi_b) + '</div>' +
+                        '</div>' +
+
+                        '<div class="data-item full">' +
+                            '<div class="label">Deskripsi Predikat C</div>' +
+                            '<div class="value">' + safeHtml(nilai.deskripsi_c) + '</div>' +
+                        '</div>' +
+
+                        '<div class="data-item full">' +
+                            '<div class="label">Deskripsi Predikat D</div>' +
+                            '<div class="value">' + safeHtml(nilai.deskripsi_d) + '</div>' +
+                        '</div>' +
+                    '</div>' +
+
+                    '<div class="actions">' +
+                        '<button type="button" class="btn btn-secondary" id="btnKembaliDetail">Kembali</button>' +
+                        '<button type="button" class="btn btn-edit btnEdit" data-id="' + nilai.id + '">' +
+                            '<i class="fa-solid fa-pen"></i> Edit' +
+                        '</button>' +
+                    '</div>'
+                );
+
+                showDetail();
+            },
+            error: function () {
+                showError('Gagal memuat detail nilai.');
+            }
+        });
+    });
+
+    $(document).on('click', '#btnKembaliDetail', function () {
+        showTable();
+    });
+
+    $(document).on('click', '.btnEdit', function () {
+        var id = $(this).data('id');
+
+        $.ajax({
+            url: apiUrl + '/' + id,
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function (response) {
+                var nilai = response.data;
+
+                $('#formTitle').text('Edit Nilai');
+                $('#nilai_id').val(nilai.id);
+                $('#kkm').val(nilai.kkm);
+                $('#deskripsi_a').val(nilai.deskripsi_a);
+                $('#deskripsi_b').val(nilai.deskripsi_b);
+                $('#deskripsi_c').val(nilai.deskripsi_c);
+                $('#deskripsi_d').val(nilai.deskripsi_d);
+
+                loadGuru(nilai.guru_id);
+                showForm();
+            },
+            error: function () {
+                showError('Data nilai gagal dimuat.');
+            }
+        });
+    });
+
+    $(document).on('click', '.btnHapus', function () {
+        var id = $(this).data('id');
+
+        Swal.fire({
+            title: 'Hapus Data?',
+            text: 'Data nilai yang dihapus tidak dapat dikembalikan.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#b91c1c',
+            cancelButtonColor: '#64748b'
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: apiUrl + '/' + id,
+                    type: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: response.message || 'Data nilai berhasil dihapus.',
+                            icon: 'success',
+                            confirmButtonColor: '#1e3a8a'
+                        });
+
+                        loadNilai();
+                    },
+                    error: function () {
+                        showError('Data nilai gagal dihapus.');
+                    }
+                });
+            }
+        });
+    });
+
+    $('#searchInput').on('keyup', function () {
+        var keyword = $(this).val().toLowerCase();
+
+        var filtered = nilaiList.filter(function (nilai) {
+            var gabungan =
+                getGuruName(nilai) + ' ' +
+                nilai.kkm + ' ' +
+                nilai.deskripsi_a + ' ' +
+                nilai.deskripsi_b + ' ' +
+                nilai.deskripsi_c + ' ' +
+                nilai.deskripsi_d;
+
+            return gabungan.toLowerCase().indexOf(keyword) !== -1;
+        });
+
+        renderTable(filtered);
+    });
 
     function showTable() {
         $('#tableSection').show();
@@ -282,288 +461,53 @@ $(document).ready(function () {
         $('#detailSection').show();
     }
 
-    $('#btnTambah').on('click', function () {
-        $('#formTitle').text('Tambah Nilai');
-        $('#nilai_id').val('');
-        $('#formNilai')[0].reset();
-        loadGuru();
-        showForm();
-    });
+    function getGuruName(nilai) {
+        return nilai.guru && nilai.guru.nama ? nilai.guru.nama : '-';
+    }
 
-    $('#btnBatal').on('click', function () {
-        $('#formNilai')[0].reset();
-        showTable();
-    });
+    function safeHtml(value) {
+        if (value === null || value === undefined || value === '') {
+            return '-';
+        }
 
-    $('#formNilai').on('submit', function (e) {
-        e.preventDefault();
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
 
-        var id = $('#nilai_id').val();
-        var method = id ? 'PUT' : 'POST';
-        var url = id ? apiUrl + '/' + id : apiUrl;
-        var actionText = id ? 'memperbarui' : 'menyimpan';
+    function getErrorMessage(xhr, defaultMessage) {
+        var pesan = defaultMessage;
 
-        Swal.fire({
-            title: id ? 'Update Data Nilai?' : 'Simpan Data Nilai?',
-            html: `
-                <p style="color:#64748b; margin-bottom:18px; font-size:15px; line-height:1.6;">
-                    Pastikan data guru dan KKM sudah benar sebelum ${actionText} data.
-                </p>
+        if (xhr.responseJSON) {
+            if (xhr.responseJSON.errors) {
+                var list = [];
 
-                <div style="
-                    background:#eff6ff;
-                    border:1px solid #bfdbfe;
-                    border-radius:18px;
-                    padding:16px;
-                    text-align:left;
-                ">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="
-                            width:42px;
-                            height:42px;
-                            border-radius:12px;
-                            background:#dbeafe;
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            color:#1e3a8a;
-                            font-size:18px;
-                        ">
-                            <i class="fa-solid fa-clipboard-check"></i>
-                        </div>
-
-                        <div>
-                            <div style="font-weight:700; color:#0f172a; margin-bottom:4px;">
-                                Data nilai akan diproses
-                            </div>
-                            <div style="color:#64748b; font-size:14px;">
-                                Predikat A-D akan otomatis tersimpan.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `,
-            width: '520px',
-            showCancelButton: true,
-            confirmButtonText: `
-                <i class="fa-solid fa-save"></i>
-                Ya, Simpan
-            `,
-            cancelButtonText: `
-                <i class="fa-solid fa-xmark"></i>
-                Batal
-            `,
-            reverseButtons: true,
-            background: '#ffffff',
-            buttonsStyling: false,
-            customClass: {
-                popup: 'swal-modern',
-                confirmButton: 'swal-confirm',
-                cancelButton: 'swal-cancel'
-            }
-        }).then(function (result) {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: url,
-                    type: method,
-                    headers: { 'Accept': 'application/json' },
-                    data: {
-                        guru_id: $('#guru_id').val(),
-                        kkm: $('#kkm').val(),
-                        deskripsi_a: 'Sangat Baik',
-                        deskripsi_b: 'Baik',
-                        deskripsi_c: 'Cukup',
-                        deskripsi_d: 'Kurang'
-                    },
-                    success: function (response) {
-                        $('#formNilai')[0].reset();
-                        showTable();
-                        loadNilai();
-
-                        showSuccessPopup(
-                            'Berhasil!',
-                            response.message || 'Data nilai berhasil disimpan.'
-                        );
-                    },
-                    error: function () {
-                        showErrorPopup(
-                            'Gagal!',
-                            'Data nilai gagal disimpan. Periksa kembali guru dan KKM.'
-                        );
-                    }
+                $.each(xhr.responseJSON.errors, function (key, values) {
+                    $.each(values, function (index, value) {
+                        list.push(value);
+                    });
                 });
+
+                pesan = list.join('\n');
+            } else if (xhr.responseJSON.message) {
+                pesan = xhr.responseJSON.message;
             }
-        });
-    });
+        }
 
-    $(document).on('click', '.btnDetail', function () {
-        var id = $(this).data('id');
+        return pesan;
+    }
 
-        $.ajax({
-            url: apiUrl + '/' + id,
-            type: 'GET',
-            headers: { 'Accept': 'application/json' },
-            success: function (response) {
-                var nilai = response.data;
-
-                $('#detailSection').html(
-                    '<h3>Detail Nilai</h3>' +
-                    '<p><b>Guru:</b> ' + safeHtml(getGuruName(nilai)) + '</p>' +
-                    '<p><b>KKM:</b> ' + safeHtml(nilai.kkm) + '</p>' +
-                    '<p><b>Predikat A:</b> ' + safeHtml(nilai.deskripsi_a) + '</p>' +
-                    '<p><b>Predikat B:</b> ' + safeHtml(nilai.deskripsi_b) + '</p>' +
-                    '<p><b>Predikat C:</b> ' + safeHtml(nilai.deskripsi_c) + '</p>' +
-                    '<p><b>Predikat D:</b> ' + safeHtml(nilai.deskripsi_d) + '</p>' +
-                    '<br>' +
-                    '<button type="button" class="btn btn-primary btnEdit" data-id="' + nilai.id + '">Edit</button> ' +
-                    '<button type="button" class="btn btn-secondary" id="btnKembaliDetail">Kembali</button>'
-                );
-
-                showDetail();
-            },
-            error: function () {
-                showErrorPopup('Gagal!', 'Detail nilai gagal dimuat.');
-            }
-        });
-    });
-
-    $(document).on('click', '#btnKembaliDetail', function () {
-        showTable();
-    });
-
-    $(document).on('click', '.btnEdit', function () {
-        var id = $(this).data('id');
-
-        $.ajax({
-            url: apiUrl + '/' + id,
-            type: 'GET',
-            headers: { 'Accept': 'application/json' },
-            success: function (response) {
-                var nilai = response.data;
-
-                $('#formTitle').text('Edit Nilai');
-                $('#nilai_id').val(nilai.id);
-                $('#kkm').val(nilai.kkm);
-
-                loadGuru(nilai.guru_id);
-                showForm();
-            },
-            error: function () {
-                showErrorPopup('Gagal!', 'Data nilai gagal dimuat.');
-            }
-        });
-    });
-
-    $(document).on('click', '.btnHapus', function () {
-        var id = $(this).data('id');
-
+    function showError(message) {
         Swal.fire({
-            title: 'Hapus Data Nilai?',
-            html: `
-                <div style="margin-top:10px;">
-                    <p style="
-                        color:#64748b;
-                        margin-bottom:18px;
-                        font-size:15px;
-                        line-height:1.6;
-                    ">
-                        Data nilai yang dihapus tidak dapat dikembalikan.
-                        Pastikan Anda yakin ingin melanjutkan.
-                    </p>
-
-                    <div style="
-                        background:#fff1f2;
-                        border:1px solid #fecdd3;
-                        border-radius:18px;
-                        padding:16px;
-                        text-align:left;
-                    ">
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <div style="
-                                width:42px;
-                                height:42px;
-                                border-radius:12px;
-                                background:#ffe4e6;
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                color:#dc2626;
-                                font-size:18px;
-                            ">
-                                <i class="fa-solid fa-trash"></i>
-                            </div>
-
-                            <div>
-                                <div style="font-weight:700; color:#0f172a; margin-bottom:4px;">
-                                    Data akan dihapus
-                                </div>
-                                <div style="color:#64748b; font-size:14px;">
-                                    Data nilai ini akan hilang permanen.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `,
-            width: '520px',
-            showCancelButton: true,
-            confirmButtonText: `
-                <i class="fa-solid fa-trash"></i>
-                Ya, Hapus
-            `,
-            cancelButtonText: `
-                <i class="fa-solid fa-xmark"></i>
-                Batal
-            `,
-            reverseButtons: true,
-            background: '#ffffff',
-            buttonsStyling: false,
-            customClass: {
-                popup: 'swal-modern',
-                confirmButton: 'swal-danger',
-                cancelButton: 'swal-cancel'
-            }
-        }).then(function (result) {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: apiUrl + '/' + id,
-                    type: 'DELETE',
-                    headers: { 'Accept': 'application/json' },
-                    success: function (response) {
-                        loadNilai();
-
-                        showSuccessPopup(
-                            'Berhasil Dihapus!',
-                            response.message || 'Data nilai berhasil dihapus.'
-                        );
-                    },
-                    error: function () {
-                        showErrorPopup(
-                            'Gagal!',
-                            'Data nilai gagal dihapus.'
-                        );
-                    }
-                });
-            }
+            title: 'Gagal!',
+            text: message,
+            icon: 'error',
+            confirmButtonColor: '#b91c1c'
         });
-    });
-
-    $('#searchInput').on('keyup', function () {
-        var keyword = $(this).val().toLowerCase();
-
-        var filtered = nilaiList.filter(function (nilai) {
-            var gabungan =
-                String(getGuruName(nilai) || '') + ' ' +
-                String(nilai.kkm || '') + ' ' +
-                String(nilai.deskripsi_a || '') + ' ' +
-                String(nilai.deskripsi_b || '') + ' ' +
-                String(nilai.deskripsi_c || '') + ' ' +
-                String(nilai.deskripsi_d || '');
-
-            return gabungan.toLowerCase().indexOf(keyword) !== -1;
-        });
-
-        renderTable(filtered);
-    });
+    }
 });
 </script>
+@endsection
