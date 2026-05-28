@@ -10,21 +10,26 @@ return new class extends Migration
     {
         Schema::create('nilais', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("guru_id");
-            $table->integer("kkm");
-            $table->text("deskripsi_a");
-            $table->text("deskripsi_b");
-            $table->text("deskripsi_c");
-            $table->text("deskripsi_d");
+            $table->unsignedBigInteger('siswa_id');
+            $table->unsignedBigInteger('mata_pelajaran_id');
+            $table->integer('nilai');
+            $table->integer('kkm');
+            $table->string('predikat');
+            $table->string('keterangan');
             $table->timestamps();
 
-            $table->foreign("guru_id")
-                ->references("id")
-                ->on("gurus")
-                ->onDelete("cascade");
+            $table->foreign('siswa_id')
+                ->references('id')
+                ->on('siswas')
+                ->onDelete('cascade');
+
+            $table->foreign('mata_pelajaran_id')
+                ->references('id')
+                ->on('mata_pelajarans')
+                ->onDelete('cascade');
         });
     }
-    
+
     public function down(): void
     {
         Schema::dropIfExists('nilais');
