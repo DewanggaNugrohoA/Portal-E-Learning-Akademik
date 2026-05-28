@@ -71,7 +71,7 @@
             </div>
 
             <div class="module-grid">
-                <a href="#" class="module-card menu-link" data-url="/siswa" data-module="siswa">
+                <a href="/siswa" class="module-card">
                     <div class="module-icon">
                         <i class="fa-solid fa-user-graduate"></i>
                     </div>
@@ -84,7 +84,7 @@
                     <i class="fa-solid fa-arrow-right module-arrow"></i>
                 </a>
 
-                <a href="#" class="module-card menu-link" data-url="/guru" data-module="guru">
+                <a href="/guru" class="module-card">
                     <div class="module-icon">
                         <i class="fa-solid fa-chalkboard-user"></i>
                     </div>
@@ -97,7 +97,7 @@
                     <i class="fa-solid fa-arrow-right module-arrow"></i>
                 </a>
 
-                <a href="#" class="module-card menu-link" data-url="/mata-pelajaran" data-module="mata-pelajaran">
+                <a href="/mata-pelajaran" class="module-card">
                     <div class="module-icon">
                         <i class="fa-solid fa-book-open"></i>
                     </div>
@@ -110,7 +110,7 @@
                     <i class="fa-solid fa-arrow-right module-arrow"></i>
                 </a>
 
-                <a href="#" class="module-card active-module menu-link" data-url="/materi" data-module="materi">
+                <a href="/materi" class="module-card">
                     <div class="module-icon">
                         <i class="fa-solid fa-book"></i>
                     </div>
@@ -123,7 +123,7 @@
                     <i class="fa-solid fa-arrow-right module-arrow"></i>
                 </a>
 
-                <a href="#" class="module-card menu-link" data-url="/nilai" data-module="nilai">
+                <a href="/nilai" class="module-card">
                     <div class="module-icon">
                         <i class="fa-solid fa-chart-line"></i>
                     </div>

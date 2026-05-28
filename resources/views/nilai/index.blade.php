@@ -141,6 +141,77 @@
     .swal2-actions {
         gap: 12px !important;
     }
+
+    .detail-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+}
+
+.detail-head {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.detail-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: #1e3a8a;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.detail-head h2 {
+    margin: 0;
+    color: #111827;
+    font-size: 28px;
+}
+
+.detail-head p {
+    margin: 8px 0 0;
+    color: #64748b;
+}
+
+.detail-box {
+    border: 1px solid #e5eaf3;
+    border-radius: 20px;
+    padding: 24px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.detail-item {
+    background: #f8fbff;
+    border: 1px solid #e5eaf3;
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.detail-item span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.detail-actions {
+    margin-top: 22px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
 </style>
 @endsection
 
@@ -410,67 +481,87 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.btnDetail', function () {
-        var id = $(this).data('id');
+    var id = $(this).data('id');
 
-        $.ajax({
-            url: apiUrl + '/' + id,
-            type: 'GET',
-            headers: { 'Accept': 'application/json' },
-            success: function (response) {
-                var nilai = response.data;
+    $.ajax({
+        url: apiUrl + '/' + id,
+        type: 'GET',
+        headers: { 'Accept': 'application/json' },
+        success: function (response) {
+            var nilai = response.data;
 
-                $('#detailSection').html(
-                    '<h3>Detail Nilai</h3>' +
-                    '<p><b>Siswa:</b> ' + safeHtml(getSiswaName(nilai)) + '</p>' +
-                    '<p><b>Mata Pelajaran:</b> ' + safeHtml(getMataPelajaranName(nilai)) + '</p>' +
-                    '<p><b>Nilai:</b> ' + safeHtml(nilai.nilai) + '</p>' +
-                    '<p><b>KKM:</b> ' + safeHtml(nilai.kkm) + '</p>' +
-                    '<p><b>Predikat:</b> ' + safeHtml(nilai.predikat) + '</p>' +
-                    '<p><b>Keterangan:</b> ' + safeHtml(nilai.keterangan) + '</p>' +
-                    '<br>' +
-                    '<button type="button" class="btn btn-primary btnEdit" data-id="' + nilai.id + '">Edit</button> ' +
-                    '<button type="button" class="btn btn-secondary" id="btnKembaliDetail">Kembali</button>'
-                );
+            $('#detailSection').html(
+                '<div class="detail-card">' +
+                    '<div class="detail-head">' +
+                        '<div class="detail-icon">' +
+                            '<i class="fa-solid fa-chart-line"></i>' +
+                        '</div>' +
+                        '<div>' +
+                            '<h2>' + safeHtml(getSiswaName(nilai)) + '</h2>' +
+                            '<p>' + safeHtml(getMataPelajaranName(nilai)) + ' • Nilai ' + safeHtml(nilai.nilai) + '</p>' +
+                        '</div>' +
+                    '</div>' +
 
-                showDetail();
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                showErrorPopup('Gagal!', 'Detail nilai gagal dimuat.');
-            }
-        });
+                    '<div class="detail-box">' +
+                        '<h3>Informasi Data Nilai</h3>' +
+                        '<div class="detail-grid">' +
+                            '<div class="detail-item"><span>Nama Siswa</span><b>' + safeHtml(getSiswaName(nilai)) + '</b></div>' +
+                            '<div class="detail-item"><span>Mata Pelajaran</span><b>' + safeHtml(getMataPelajaranName(nilai)) + '</b></div>' +
+                            '<div class="detail-item"><span>Nilai</span><b>' + safeHtml(nilai.nilai) + '</b></div>' +
+                            '<div class="detail-item"><span>KKM</span><b>' + safeHtml(nilai.kkm) + '</b></div>' +
+                            '<div class="detail-item"><span>Predikat</span><b>' + safeHtml(nilai.predikat) + '</b></div>' +
+                            '<div class="detail-item"><span>Keterangan</span><b>' + safeHtml(nilai.keterangan) + '</b></div>' +
+                        '</div>' +
+                    '</div>' +
+
+                    '<div class="detail-actions">' +
+                        '<button type="button" class="btn btn-secondary" id="btnKembaliDetail">' +
+                            '<i class="fa-solid fa-arrow-left"></i> Kembali' +
+                        '</button>' +
+                        '<button type="button" class="btn btn-primary btnEdit" data-id="' + nilai.id + '">' +
+                            '<i class="fa-solid fa-pen"></i> Edit Nilai' +
+                        '</button>' +
+                    '</div>' +
+                '</div>'
+            );
+
+            showDetail();
+        },
+        error: function (xhr) {
+            console.log(xhr.responseText);
+            showErrorPopup('Gagal!', 'Detail nilai gagal dimuat.');
+        }
     });
+});
+$(document).on('click', '#btnKembaliDetail', function () {
+    showTable();
+});
 
-    $(document).on('click', '#btnKembaliDetail', function () {
-        showTable();
+$(document).on('click', '.btnEdit', function () {
+    var id = $(this).data('id');
+
+    $.ajax({
+        url: apiUrl + '/' + id,
+        type: 'GET',
+        headers: { 'Accept': 'application/json' },
+        success: function (response) {
+            var nilai = response.data;
+
+            $('#formTitle').text('Edit Nilai');
+            $('#nilai_id').val(nilai.id);
+            $('#nilai').val(nilai.nilai);
+            $('#kkm').val(nilai.kkm);
+
+            loadSiswa(nilai.siswa_id);
+            loadMataPelajaran(nilai.mata_pelajaran_id);
+            showForm();
+        },
+        error: function (xhr) {
+            console.log(xhr.responseText);
+            showErrorPopup('Gagal!', 'Data nilai gagal dimuat.');
+        }
     });
-
-    $(document).on('click', '.btnEdit', function () {
-        var id = $(this).data('id');
-
-        $.ajax({
-            url: apiUrl + '/' + id,
-            type: 'GET',
-            headers: { 'Accept': 'application/json' },
-            success: function (response) {
-                var nilai = response.data;
-
-                $('#formTitle').text('Edit Nilai');
-                $('#nilai_id').val(nilai.id);
-                $('#nilai').val(nilai.nilai);
-                $('#kkm').val(nilai.kkm);
-
-                loadSiswa(nilai.siswa_id);
-                loadMataPelajaran(nilai.mata_pelajaran_id);
-                showForm();
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                showErrorPopup('Gagal!', 'Data nilai gagal dimuat.');
-            }
-        });
-    });
-
+});
     $(document).on('click', '.btnHapus', function () {
         var id = $(this).data('id');
 
